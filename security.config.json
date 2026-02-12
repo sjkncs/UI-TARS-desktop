@@ -1,0 +1,120 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-02-11",
+  "security": {
+    "enabled": true,
+    "mode": "strict",
+    "description": "根据工信部网络安全风险通知的安全配置"
+  },
+  "gateway": {
+    "binding": "loopback",
+    "host": "127.0.0.1",
+    "port": 18789,
+    "allowedOrigins": ["http://localhost:18789", "http://127.0.0.1:18789"],
+    "description": "仅本地访问，不对外网开放"
+  },
+  "workspace": {
+    "allowed": [
+      "C:\\Users\\Administrator\\.openclaw\\workspace",
+      "E:\\2026.2.github"
+    ],
+    "description": "允许操作的工作目录"
+  },
+  "blockedCommands": {
+    "patterns": [
+      "rm\\s+-rf\\s+/",
+      "del\\s+/f\\s+/s\\s+/q\\s+C:\\\\",
+      "format",
+      "diskpart",
+      "reg\\s+delete",
+      "reg\\s+add.*HKLM",
+      "reg\\s+add.*HKCU.*\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run",
+      "powershell.*Remove-Item.*-Recurse.*-Force",
+      "cmd.*rd\\s+/s\\s+/q",
+      "rmdir\\s+/s\\s+/q"
+    ],
+    "keywords": [
+      "C:\\\\Windows",
+      "C:\\\\Program Files",
+      "C:\\\\Program Files (x86)",
+      "/System",
+      "/Library",
+      "/usr/bin",
+      "/usr/lib",
+      "/etc"
+    ],
+    "description": "严格禁止的危险命令和路径"
+  },
+  "blockedOperations": [
+    {
+      "type": "registry",
+      "action": "modify",
+      "paths": [
+        "HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion",
+        "HKLM\\\\SYSTEM",
+        "HKCU\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run"
+      ],
+      "description": "禁止修改系统注册表关键项"
+    },
+    {
+      "type": "network",
+      "action": "scan",
+      "description": "禁止端口扫描和网络攻击行为"
+    },
+    {
+      "type": "system",
+      "action": "delete",
+      "paths": [
+        "C:\\\\Windows",
+        "C:\\\\Program Files"
+      ],
+      "description": "禁止删除系统关键目录"
+    }
+  ],
+  "requiresAuthorization": {
+    "fileOperations": {
+      "delete": true,
+      "modify": true,
+      "create": false,
+      "read": false
+    },
+    "systemOperations": {
+      "processKill": true,
+      "serviceControl": true,
+      "registryModify": true
+    },
+    "networkOperations": {
+      "externalRequest": true,
+      "portBinding": true
+    },
+    "description": "需要用户明确授权的操作"
+  },
+  "audit": {
+    "enabled": true,
+    "logPath": "C:\\Users\\Administrator\\.openclaw\\logs\\security-audit.log",
+    "logLevel": "info",
+    "recordOperations": true,
+    "recordCommands": true,
+    "description": "审计日志配置"
+  },
+  "feishu": {
+    "enabled": false,
+    "requireMention": true,
+    "allowedUsers": [],
+    "blockedInPublicGroups": true,
+    "description": "飞书机器人安全配置"
+  },
+  "securityChecks": {
+    "weekly": {
+      "enabled": true,
+      "checkAbnormalOperations": true,
+      "description": "每周检查异常操作"
+    },
+    "monthly": {
+      "enabled": true,
+      "checkUpdates": true,
+      "runDeepAudit": true,
+      "description": "每月更新和深度审计"
+    }
+  }
+}
