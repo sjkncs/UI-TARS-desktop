@@ -48,7 +48,7 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
-      - uses: browser-actions/setup-chrome@v1
+      - uses: browser-actions/setup-chrome@19ae4b339ee18925ab85cf12c1041150ea4a44c8 # v1
         with:
           chrome-version: 120
           install-dependencies: true
