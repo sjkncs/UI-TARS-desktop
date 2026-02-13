@@ -5,7 +5,7 @@
 
 import { AgentPlugin } from '../AgentPlugin';
 import { LLMRequestHookPayload, LLMResponseHookPayload } from '@tarko/agent';
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 interface SnapshotPluginConfigOption {
@@ -75,8 +75,6 @@ export class SnapshotPlugin extends AgentPlugin {
    * @param dir The directory path.
    */
   private ensureDirectoryExists(dir: string): void {
-    if (!existsSync(dir)) {
-      mkdirSync(dir, { recursive: true });
-    }
+    mkdirSync(dir, { recursive: true });
   }
 }
