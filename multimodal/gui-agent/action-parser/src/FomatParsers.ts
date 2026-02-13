@@ -356,7 +356,7 @@ class FallbackFormatParser implements FormatParser {
 
     // Try to parse the action string with function call format
     // const actionMatch = text.match(/Action[：:]?\s*([\s\S]*?)(?=\s*<\/Output>|$)/s);
-    const regex = /\w+\((?:[^()"']|"[^"]*"|'[^']*'|\([^()]*\))*\)/;
+    const regex = /\w+\([^)]*\)/;
     const actionMatch = text.match(regex);
 
     if (!actionMatch) {

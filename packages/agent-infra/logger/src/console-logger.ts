@@ -7,6 +7,13 @@
 import { BaseLogger, ColorName, LogLevel } from './types';
 import { colorize, CSS_COLOR_VALUES } from './colorize';
 
+/** Sanitize log arguments to prevent log injection via control characters */
+function sanitizeArgs(args: any[]): any[] {
+  return args.map((arg) =>
+    typeof arg === 'string' ? arg.replace(/[\r\n]/g, '\u2424') : arg,
+  );
+}
+
 export class ConsoleLogger extends BaseLogger {
   private prefix: string;
   private lastPrefixColor: ColorName | null = null;
@@ -76,7 +83,7 @@ export class ConsoleLogger extends BaseLogger {
    */
   log(...args: any[]): void {
     if (this.level <= LogLevel.DEBUG) {
-      console.log(this.colorPrefix(this.prefix), ...args);
+      console.log(this.colorPrefix(this.prefix), ...sanitizeArgs(args));
     }
   }
 
@@ -143,11 +150,11 @@ export class ConsoleLogger extends BaseLogger {
           `%c${prefix}%c`,
           `color: ${CSS_COLOR_VALUES[this.lastPrefixColor]}; font-weight: bold`,
           'color: inherit',
-          ...args,
+          ...sanitizeArgs(args),
         );
         this.lastPrefixColor = null;
       } else {
-        console.error(`${prefix}`, ...args);
+        console.error(`${prefix}`, ...sanitizeArgs(args));
       }
     }
   }
@@ -190,11 +197,11 @@ export class ConsoleLogger extends BaseLogger {
           `%c${prefix}%c`,
           `color: ${CSS_COLOR_VALUES[this.lastPrefixColor]}; font-weight: bold`,
           'color: inherit',
-          ...args,
+          ...sanitizeArgs(args),
         );
         this.lastPrefixColor = null;
       } else {
-        console.debug(`${prefix}`, ...args);
+        console.debug(`${prefix}`, ...sanitizeArgs(args));
       }
     }
   }
