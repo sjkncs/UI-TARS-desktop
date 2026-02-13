@@ -107,7 +107,7 @@ export class ContextReferenceProcessor {
         const normalizedTarget = path.resolve(absolutePath);
 
         if (!normalizedTarget.startsWith(normalizedWorkspace)) {
-          console.warn(`File reference outside workspace: ${fileRef}`);
+          console.warn(`File reference outside workspace: ${String(fileRef).replace(/[\n\r\t]/g, '_').slice(0, 200)}`);
           expandedContents.push(
             `<file path="${fileRef}">\nError: File reference outside workspace\n</file>`,
           );
@@ -115,7 +115,7 @@ export class ContextReferenceProcessor {
         }
 
         if (!fs.existsSync(absolutePath)) {
-          console.warn(`File reference not found: ${fileRef}`);
+          console.warn(`File reference not found: ${String(fileRef).replace(/[\n\r\t]/g, '_').slice(0, 200)}`);
           expandedContents.push(`<file path="${fileRef}">\nError: File not found\n</file>`);
           continue;
         }
@@ -126,12 +126,12 @@ export class ContextReferenceProcessor {
             const fileContent = fs.readFileSync(absolutePath, 'utf8');
             expandedContents.push(`<file path="${fileRef}">\n${fileContent}\n</file>`);
           } catch (error) {
-            console.error(`Failed to read file ${fileRef}:`, error);
+            console.error(`Failed to read file ${String(fileRef).replace(/[\n\r\t]/g, '_').slice(0, 200)}:`, error);
             expandedContents.push(`<file path="${fileRef}">\nError: Failed to read file\n</file>`);
           }
         }
       } catch (error) {
-        console.error(`Failed to process file reference ${fileRef}:`, error);
+        console.error(`Failed to process file reference ${String(fileRef).replace(/[\n\r\t]/g, '_').slice(0, 200)}:`, error);
         expandedContents.push(
           `<file path="${fileRef}">\nError: Failed to process file reference\n</file>`,
         );
@@ -151,7 +151,7 @@ export class ContextReferenceProcessor {
             const normalizedTarget = path.resolve(absolutePath);
 
             if (!normalizedTarget.startsWith(normalizedWorkspace)) {
-              console.warn(`Directory reference outside workspace: ${dirRef}`);
+              console.warn(`Directory reference outside workspace: ${String(dirRef).replace(/[\n\r\t]/g, '_').slice(0, 200)}`);
               return null;
             }
 
