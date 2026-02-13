@@ -26,7 +26,7 @@ jobs:
           echo "Operating System:"
           uname -a
       - name: Install pnpm
-        run: npm install -g pnpm@9
+        run: npm install -g pnpm@9.10.0
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version: 20
@@ -34,7 +34,7 @@ jobs:
       - name: Install Python setuptools
         run: brew install python-setuptools
       - name: Install appdmg
-        run: npm install -g appdmg
+        run: npm install -g appdmg@1.6.0
       - name: Install the Apple certificate and provisioning profile
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
@@ -96,7 +96,7 @@ jobs:
           echo "Operating System:"
           uname -a
       - name: Install pnpm
-        run: npm install -g pnpm@9
+        run: npm install -g pnpm@9.10.0
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version: 20
@@ -104,7 +104,7 @@ jobs:
       - name: Install Python setuptools
         run: brew install python-setuptools
       - name: Install appdmg
-        run: npm install -g appdmg
+        run: npm install -g appdmg@1.6.0
       - name: Install the Apple certificate and provisioning profile
         env:
           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
@@ -167,7 +167,7 @@ jobs:
           echo "Operating System:"
           uname -a
       - name: Install pnpm
-        run: npm install -g pnpm@9
+        run: npm install -g pnpm@9.10.0
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version: 20
@@ -206,7 +206,7 @@ jobs:
           echo "Operating System:"
           cmd /c ver
       - name: Install pnpm
-        run: npm install -g pnpm@9
+        run: npm install -g pnpm@9.10.0
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
         with:
           node-version: 20
