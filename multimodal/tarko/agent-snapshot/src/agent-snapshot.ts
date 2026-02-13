@@ -58,16 +58,19 @@ export class AgentSnapshot {
     if (!resolvedPath.startsWith(allowedBase + path.sep) && resolvedPath !== allowedBase) {
       throw new Error('Snapshot path must be within the current working directory');
     }
-    this.snapshotPath = resolvedPath;
-    this.snapshotName = options.snapshotName ?? path.basename(resolvedPath);
+    // Re-construct safe path from allowedBase + validated relative portion
+    const relativePortion = path.relative(allowedBase, resolvedPath);
+    const safePath = path.join(allowedBase, relativePortion);
+    this.snapshotPath = safePath;
+    this.snapshotName = options.snapshotName ?? path.basename(safePath);
     this.snapshotManager = new SnapshotManager(this.snapshotPath, options.normalizerConfig);
     this.replayHook = new AgentReplaySnapshotHook(agent, {
-      snapshotPath: resolvedPath,
+      snapshotPath: safePath,
       snapshotName: this.snapshotName,
     });
 
     // Create directory if it doesn't exist
-    fs.mkdirSync(resolvedPath, { recursive: true });
+    fs.mkdirSync(safePath, { recursive: true });
 
     const agentSnapshotProto = Object.getPrototypeOf(this);
     const methodsToPreserve: Record<string, Function> = {};

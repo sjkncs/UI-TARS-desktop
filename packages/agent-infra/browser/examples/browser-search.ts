@@ -36,7 +36,9 @@ async function main() {
             (item) =>
               item.href &&
               !item.href.includes('google') &&
-              !item.href.toLowerCase().startsWith('javascript:'),
+              !item.href.toLowerCase().startsWith('javascript:') &&
+              !item.href.toLowerCase().startsWith('vbscript:') &&
+              !item.href.toLowerCase().startsWith('data:'),
           );
       },
       pageFunctionParams: [],

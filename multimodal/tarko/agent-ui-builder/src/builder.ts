@@ -65,12 +65,19 @@ export class AgentUIBuilder {
       if (filePath) {
         // Resolve and validate path to prevent path traversal
         const resolvedPath = path.resolve(filePath);
+        const allowedBase = path.resolve(process.cwd());
+        if (!resolvedPath.startsWith(allowedBase + path.sep) && resolvedPath !== allowedBase) {
+          throw new Error('Output file path must be within the current working directory');
+        }
+        // Re-construct safe path from allowedBase + validated relative portion
+        const relativePortion = path.relative(allowedBase, resolvedPath);
+        const safePath = path.join(allowedBase, relativePortion);
         // Ensure directory exists
-        const dir = path.dirname(resolvedPath);
+        const dir = path.dirname(safePath);
         fs.mkdirSync(dir, { recursive: true });
 
-        // Write HTML to file
-        fs.writeFileSync(resolvedPath, htmlContent, 'utf8');
+        // Write HTML to file (content is generated from trusted template + JSON-serialized data)
+        fs.writeFileSync(safePath, htmlContent, 'utf8');
       }
 
       return htmlContent;

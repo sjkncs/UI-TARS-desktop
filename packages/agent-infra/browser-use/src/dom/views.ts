@@ -259,13 +259,16 @@ export class DOMElementNode extends DOMBaseNode {
           context.push('anchor');
         } else if (href.toLowerCase().startsWith('javascript:')) {
           context.push('javascript');
-        } else if (download !== undefined) {
-          context.push('download');
+          // Do not output javascript: URLs - skip href display for safety
         } else {
-          context.push('link');
+          if (download !== undefined) {
+            context.push('download');
+          } else {
+            context.push('link');
+          }
+          // Only show href for safe URLs
+          context.push(`href="${href}"`);
         }
-        // Always show href
-        context.push(`href="${href}"`);
       } else {
         context.push('link');
       }
