@@ -45,18 +45,46 @@ export async function extractHtmlText(filePath: string): Promise<string> {
 }
 
 function stripHtmlTags(html: string): string {
-  return html
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/<style[\s\S]*?<\/style>/gi, '')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#\d+;/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+  // Remove script/style blocks using indexOf loop (avoids ReDoS and bad-tag-filter bypass)
+  let cleaned = html;
+  for (const tag of ['script', 'style']) {
+    let result = '';
+    let searchFrom = 0;
+    const openTag = '<' + tag;
+    const closeTag = '</' + tag;
+    while (searchFrom < cleaned.length) {
+      const lower = cleaned.toLowerCase();
+      const openIdx = lower.indexOf(openTag, searchFrom);
+      if (openIdx === -1) {
+        result += cleaned.slice(searchFrom);
+        break;
+      }
+      result += cleaned.slice(searchFrom, openIdx);
+      const closeIdx = lower.indexOf(closeTag, openIdx);
+      if (closeIdx === -1) break;
+      const closeEnd = cleaned.indexOf('>', closeIdx);
+      searchFrom = closeEnd === -1 ? cleaned.length : closeEnd + 1;
+    }
+    cleaned = result;
+  }
+
+  // Strip remaining HTML tags
+  cleaned = cleaned.replace(/<[^>]+>/g, ' ');
+
+  // Decode HTML entities in a loop until stable (prevents incomplete multi-character sanitization)
+  let prev = '';
+  while (prev !== cleaned) {
+    prev = cleaned;
+    cleaned = cleaned
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#\d+;/g, '');
+  }
+
+  return cleaned.replace(/\s+/g, ' ').trim();
 }
 
 // ─── DOCX (Office Open XML) ───────────────────────────────────────

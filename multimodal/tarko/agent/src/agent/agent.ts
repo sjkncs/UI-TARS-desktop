@@ -315,7 +315,7 @@ Provide concise and accurate responses.`;
       // Generate sessionId if not provided
       const sessionId =
         normalizedOptions.sessionId ??
-        `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+        `${Date.now()}-${crypto.randomUUID().slice(0, 12)}`;
 
 
 

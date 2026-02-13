@@ -112,6 +112,11 @@ export async function generateReleaseNotes(
 ): Promise<string> {
   try {
     // Get commits between tags
+    // Validate tag names contain only safe characters (alphanumeric, dots, hyphens, slashes)
+    const safeTagPattern = /^[a-zA-Z0-9._\-/]+$/;
+    if (!safeTagPattern.test(tagName) || (previousTag && !safeTagPattern.test(previousTag))) {
+      throw new Error('Invalid tag name characters detected');
+    }
     const gitRange = previousTag ? `${previousTag}..${tagName}` : tagName;
     const { stdout } = await execa(
       `git log "${gitRange}" --pretty=format:'%H|%s|%an|%ae' --no-merges`,

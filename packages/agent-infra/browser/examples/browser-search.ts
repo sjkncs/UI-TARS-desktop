@@ -36,7 +36,7 @@ async function main() {
             (item) =>
               item.href &&
               !item.href.includes('google') &&
-              !item.href.startsWith('javascript:'),
+              !item.href.toLowerCase().startsWith('javascript:'),
           );
       },
       pageFunctionParams: [],

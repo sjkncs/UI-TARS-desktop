@@ -63,12 +63,14 @@ export class AgentUIBuilder {
 
       // Save to file if path provided
       if (filePath) {
+        // Resolve and validate path to prevent path traversal
+        const resolvedPath = path.resolve(filePath);
         // Ensure directory exists
-        const dir = path.dirname(filePath);
+        const dir = path.dirname(resolvedPath);
         fs.mkdirSync(dir, { recursive: true });
 
         // Write HTML to file
-        fs.writeFileSync(filePath, htmlContent, 'utf8');
+        fs.writeFileSync(resolvedPath, htmlContent, 'utf8');
       }
 
       return htmlContent;

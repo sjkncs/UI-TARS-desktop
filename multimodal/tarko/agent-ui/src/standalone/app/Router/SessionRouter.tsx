@@ -40,11 +40,13 @@ export const SessionRouter: React.FC<SessionRouterProps> = ({ children }) => {
 
     if (sessionId && sessionExists && connectionStatus.connected && activeSessionId !== sessionId) {
       console.log(
-        `SessionRouter: Loading session ${sessionId} from URL (current active: ${activeSessionId})`,
+        'SessionRouter: Loading session %s from URL (current active: %s)',
+        sessionId,
+        activeSessionId,
       );
 
       setActiveSession(sessionId).catch((error) => {
-        console.error(`Failed to load session ${sessionId}:`, error);
+        console.error('Failed to load session %s:', sessionId, error);
       });
     }
   }, [

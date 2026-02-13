@@ -97,11 +97,15 @@ export async function startInteractiveWebUI(
           : process.platform === 'win32'
             ? 'start'
             : 'xdg-open';
-      exec(`${command} ${url}`, (err) => {
-        if (err) {
-          console.error(`Failed to open browser: ${err.message}`);
-        }
-      });
+      // Sanitize URL to prevent shell injection - only allow valid localhost URLs
+      const safeUrl = /^http:\/\/localhost:\d+$/.test(url) ? url : '';
+      if (safeUrl) {
+        exec(`${command} ${safeUrl}`, (err) => {
+          if (err) {
+            console.error('Failed to open browser:', err.message);
+          }
+        });
+      }
     }
   }
 
@@ -148,7 +152,11 @@ function setupUI(
 
     // Serve static files directly
     if (staticFilePattern.test(extractedPath)) {
-      const filePath = path.join(staticPath, extractedPath);
+      const filePath = path.resolve(staticPath, extractedPath);
+      // Prevent path traversal: ensure resolved path is within staticPath
+      if (!filePath.startsWith(path.resolve(staticPath))) {
+        return res.status(403).end();
+      }
       return fs.existsSync(filePath) ? res.sendFile(filePath) : next();
     }
 

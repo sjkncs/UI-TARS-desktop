@@ -21,6 +21,11 @@ export async function runBuildScript(
 ): Promise<void> {
   const buildScript = typeof build === 'string' ? build : 'npm run build';
 
+  // Validate build script contains only safe characters to prevent command injection
+  if (!/^[\w\s./@:=-]+$/.test(buildScript)) {
+    throw new Error(`Unsafe build script detected: ${buildScript.slice(0, 50)}`);
+  }
+
   if (dryRun) {
     logger.info(`[dry-run] Would run build with: ${buildScript}`);
     return;

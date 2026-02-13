@@ -313,9 +313,15 @@ export default config;
     const execPromise = promisify(exec);
     try {
       await execPromise('code --version');
-      exec(`code "${workspacePath}"`, (error) => {
+      // Validate workspacePath is under homedir to prevent command injection
+      const resolvedWs = path.resolve(workspacePath);
+      if (!resolvedWs.startsWith(os.homedir())) {
+        console.error('Invalid workspace path');
+        return;
+      }
+      exec(`code "${resolvedWs}"`, (error) => {
         if (error) {
-          console.error(`Failed to open workspace: ${error.message}`);
+          console.error('Failed to open workspace:', error.message);
         }
       });
       console.log(`Opening workspace at ${workspacePath}`);

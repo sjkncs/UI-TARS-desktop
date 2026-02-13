@@ -257,7 +257,7 @@ export class DOMElementNode extends DOMBaseNode {
           context.push('phone');
         } else if (href.startsWith('#')) {
           context.push('anchor');
-        } else if (href.startsWith('javascript:')) {
+        } else if (href.toLowerCase().startsWith('javascript:')) {
           context.push('javascript');
         } else if (download !== undefined) {
           context.push('download');
@@ -508,7 +508,7 @@ export class DOMElementNode extends DOMBaseNode {
         const indices = indexPart
           .split(']')
           .slice(0, -1)
-          .map((i) => i.replace('[', ''));
+          .map((i) => i.replaceAll('[', ''));
 
         for (const idx of indices) {
           // Handle numeric indices
@@ -636,7 +636,7 @@ export class DOMElementNode extends DOMBaseNode {
           // Regex-substitute any whitespace with a single space, then trim
           const collapsedValue = value.replace(/\s+/g, ' ').trim();
           // Escape embedded double-quotes
-          const safeValue = collapsedValue.replace(/"/g, '\\"');
+          const safeValue = collapsedValue.replaceAll('"', '\\"');
           cssSelector += `[${safeAttribute}*="${safeValue}"]`;
         } else {
           cssSelector += `[${safeAttribute}="${value}"]`;
