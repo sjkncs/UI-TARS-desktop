@@ -48,12 +48,17 @@ export abstract class AgentHookBase {
     },
   ) {
     this.agent = agent;
-    // Resolve path to prevent path traversal
-    this.snapshotPath = path.resolve(options.snapshotPath);
+    // Resolve and validate path to prevent path traversal
+    const resolvedSnapshotPath = path.resolve(options.snapshotPath);
+    const allowedBase = path.resolve(process.cwd());
+    if (!resolvedSnapshotPath.startsWith(allowedBase + path.sep) && resolvedSnapshotPath !== allowedBase) {
+      throw new Error('Snapshot path must be within the current working directory');
+    }
+    this.snapshotPath = resolvedSnapshotPath;
     this.snapshotName = options.snapshotName;
 
     // Create output directory
-    fs.mkdirSync(this.snapshotPath, { recursive: true });
+    fs.mkdirSync(resolvedSnapshotPath, { recursive: true });
   }
 
   /**

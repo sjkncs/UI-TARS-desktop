@@ -8,6 +8,35 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 
+/** Simple in-memory rate limiter to prevent abuse */
+function createRateLimiter(windowMs = 60_000, maxRequests = 100) {
+  const hits = new Map<string, { count: number; resetTime: number }>();
+  return (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const ip = req.ip || req.socket.remoteAddress || 'unknown';
+    const now = Date.now();
+    const record = hits.get(ip);
+    if (!record || now > record.resetTime) {
+      hits.set(ip, { count: 1, resetTime: now + windowMs });
+      return next();
+    }
+    record.count++;
+    if (record.count > maxRequests) {
+      return res.status(429).json({ error: 'Too many requests' });
+    }
+    return next();
+  };
+}
+
+/** Escape HTML special characters to prevent XSS */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 /**
  * Extract session ID from referer URL
  * @param referer The referer header value
@@ -154,22 +183,25 @@ function generateDirectoryListingHTML(
   sessionContext = '',
   sessionId?: string,
 ): string {
-  const title = `Directory: ${currentPath}${sessionContext}`;
+  const safeCurrentPath = escapeHtml(currentPath);
+  const safeSessionContext = escapeHtml(sessionContext);
+  const safeSessionId = sessionId ? escapeHtml(sessionId) : '';
+  const title = `Directory: ${safeCurrentPath}${safeSessionContext}`;
 
   const breadcrumbHTML =
     breadcrumb.length > 0
       ? breadcrumb
           .map((part, index) => {
             const href = '/' + breadcrumb.slice(0, index + 1).join('/');
-            const sessionParam = sessionId ? `?sessionId=${sessionId}` : '';
-            return `<a href="${href}${sessionParam}">${part}</a>`;
+            const sessionParam = safeSessionId ? `?sessionId=${encodeURIComponent(safeSessionId)}` : '';
+            return `<a href="${escapeHtml(href)}${sessionParam}">${escapeHtml(part)}</a>`;
           })
           .join(' / ')
       : 'workspace';
 
   const parentLink =
     currentPath !== '/'
-      ? `<tr><td><a href="${path.dirname(currentPath)}${sessionId ? `?sessionId=${sessionId}` : ''}">📁 ..</a></td><td>-</td><td>-</td></tr>`
+      ? `<tr><td><a href="${escapeHtml(path.dirname(currentPath))}${safeSessionId ? `?sessionId=${encodeURIComponent(safeSessionId)}` : ''}">📁 ..</a></td><td>-</td><td>-</td></tr>`
       : '';
 
   const fileRows = files
@@ -181,14 +213,14 @@ function generateDirectoryListingHTML(
     })
     .map((file) => {
       const icon = file.isDirectory ? '📁' : '📄';
-      const href = path.join(currentPath, file.name).replace(/\\/g, '/');
-      const sessionParam = sessionId ? `?sessionId=${sessionId}` : '';
+      const href = escapeHtml(path.join(currentPath, file.name).replace(/\\/g, '/'));
+      const sessionParam = safeSessionId ? `?sessionId=${encodeURIComponent(safeSessionId)}` : '';
       const size = file.isDirectory ? '-' : formatFileSize(file.size);
       const modified =
         file.modified.toLocaleDateString() + ' ' + file.modified.toLocaleTimeString();
 
       return `<tr>
-        <td><a href="${href}${sessionParam}">${icon} ${file.name}</a></td>
+        <td><a href="${href}${sessionParam}">${icon} ${escapeHtml(file.name)}</a></td>
         <td>${size}</td>
         <td>${modified}</td>
       </tr>`;
@@ -214,8 +246,8 @@ function generateDirectoryListingHTML(
     </style>
 </head>
 <body>
-    <h1>Agent Workspace${sessionContext}</h1>
-    ${sessionId ? `<div class="session-info">📋 Browsing files for session: <strong>${sessionId}</strong></div>` : ''}
+    <h1>Agent Workspace${safeSessionContext}</h1>
+    ${safeSessionId ? `<div class="session-info">📋 Browsing files for session: <strong>${safeSessionId}</strong></div>` : ''}
     <div class="breadcrumb">📁 ${breadcrumbHTML}</div>
     <table>
         <thead>
@@ -231,8 +263,8 @@ function generateDirectoryListingHTML(
         </tbody>
     </table>
     <div class="footer">
-        Agent Workspace Static Server${sessionContext}
-        ${sessionId ? `<br/>Tip: Remove <code>?sessionId=${sessionId}</code> from URL to browse base workspace` : ''}
+        Agent Workspace Static Server${safeSessionContext}
+        ${safeSessionId ? `<br/>Tip: Remove <code>?sessionId=${safeSessionId}</code> from URL to browse base workspace` : ''}
     </div>
 </body>
 </html>`;
@@ -273,10 +305,11 @@ export function setupWorkspaceStaticServer(
   }
 
   const fileResolver = new WorkspaceFileResolver(workspacePath);
+  const rateLimiter = createRateLimiter();
 
   // Serve workspace files with lower priority (after web UI)
   // Use a middleware function to handle directory listing and file serving
-  app.use('/', (req, res, next) => {
+  app.use('/', rateLimiter, (req, res, next) => {
     // Skip if this looks like an API request
     if (req.path.startsWith('/api/')) {
       return next();

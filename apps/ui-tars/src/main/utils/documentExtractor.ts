@@ -71,18 +71,14 @@ function stripHtmlTags(html: string): string {
   // Strip remaining HTML tags
   cleaned = cleaned.replace(/<[^>]+>/g, ' ');
 
-  // Decode HTML entities in a loop until stable (prevents incomplete multi-character sanitization)
-  let prev = '';
-  while (prev !== cleaned) {
-    prev = cleaned;
-    cleaned = cleaned
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#\d+;/g, '');
-  }
+  // Decode HTML entities (single pass — no loop to avoid double-unescaping)
+  cleaned = cleaned
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#(\d+);/g, (_m, code) => String.fromCharCode(Number(code)))
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, '&');
 
   return cleaned.replace(/\s+/g, ' ').trim();
 }

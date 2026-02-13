@@ -54,6 +54,10 @@ export class AgentSnapshot {
 
     // Resolve and validate snapshot path to prevent path traversal
     const resolvedPath = path.resolve(options.snapshotPath || path.join(process.cwd(), 'fixtures'));
+    const allowedBase = path.resolve(process.cwd());
+    if (!resolvedPath.startsWith(allowedBase + path.sep) && resolvedPath !== allowedBase) {
+      throw new Error('Snapshot path must be within the current working directory');
+    }
     this.snapshotPath = resolvedPath;
     this.snapshotName = options.snapshotName ?? path.basename(resolvedPath);
     this.snapshotManager = new SnapshotManager(this.snapshotPath, options.normalizerConfig);

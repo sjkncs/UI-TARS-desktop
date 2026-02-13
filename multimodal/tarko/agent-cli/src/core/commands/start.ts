@@ -143,7 +143,24 @@ function setupUI(
     res.send(injectConfig(htmlContent));
   };
 
-  app.get('*', (req, res, next) => {
+  // Simple rate limiter for static file serving
+  const rateHits = new Map<string, { count: number; resetTime: number }>();
+  const rateLimit = (req: any, res: any, next: any) => {
+    const ip = req.ip || req.socket?.remoteAddress || 'unknown';
+    const now = Date.now();
+    const record = rateHits.get(ip);
+    if (!record || now > record.resetTime) {
+      rateHits.set(ip, { count: 1, resetTime: now + 60_000 });
+      return next();
+    }
+    record.count++;
+    if (record.count > 200) {
+      return res.status(429).json({ error: 'Too many requests' });
+    }
+    return next();
+  };
+
+  app.get('*', rateLimit, (req, res, next) => {
     if (!pathMatcher.test(req.path)) {
       return next();
     }

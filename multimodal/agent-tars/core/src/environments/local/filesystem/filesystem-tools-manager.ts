@@ -232,7 +232,9 @@ export class FilesystemToolsManager {
               const shouldExclude = excludePatterns.some((pattern) => {
                 if (pattern.includes('*')) {
                   // Simple glob matching for patterns with wildcards
-                  const regex = new RegExp(pattern.replace(/\*/g, '.*').replace(/\./g, '\\.'), 'i');
+                  // Escape all regex metacharacters first, then convert glob * to .*
+                  const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&');
+                  const regex = new RegExp('^' + escaped.replace(/\*/g, '.*') + '$', 'i');
                   return regex.test(entry.name);
                 }
                 // Exact name matching for simple patterns
