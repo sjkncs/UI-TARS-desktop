@@ -52,16 +52,18 @@ export class AgentSnapshot {
     this.hostedAgent = agent;
     this.options = options;
 
-    this.snapshotPath = options.snapshotPath || path.join(process.cwd(), 'fixtures');
-    this.snapshotName = options.snapshotName ?? path.basename(options.snapshotPath);
+    // Resolve and validate snapshot path to prevent path traversal
+    const resolvedPath = path.resolve(options.snapshotPath || path.join(process.cwd(), 'fixtures'));
+    this.snapshotPath = resolvedPath;
+    this.snapshotName = options.snapshotName ?? path.basename(resolvedPath);
     this.snapshotManager = new SnapshotManager(this.snapshotPath, options.normalizerConfig);
     this.replayHook = new AgentReplaySnapshotHook(agent, {
-      snapshotPath: this.options.snapshotPath || path.join(process.cwd(), 'fixtures'),
+      snapshotPath: resolvedPath,
       snapshotName: this.snapshotName,
     });
 
     // Create directory if it doesn't exist
-    fs.mkdirSync(this.snapshotPath, { recursive: true });
+    fs.mkdirSync(resolvedPath, { recursive: true });
 
     const agentSnapshotProto = Object.getPrototypeOf(this);
     const methodsToPreserve: Record<string, Function> = {};

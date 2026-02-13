@@ -158,13 +158,13 @@ export class WorkspacePack {
 
         // Existence check
         if (!fsSync.existsSync(absolutePath)) {
-          console.warn(`Path not found: ${String(targetPath).replace(/[\n\r\t]/g, '_').slice(0, 200)}`);
+          console.warn('Path not found: %s', String(targetPath).replace(/[\n\r\t]/g, '_').slice(0, 200));
           continue;
         }
 
         validPaths.push(absolutePath);
       } catch (error) {
-        console.warn(`Failed to validate path ${String(targetPath).replace(/[\n\r\t]/g, '_').slice(0, 200)}:`, error);
+        console.warn('Failed to validate path %s:', String(targetPath).replace(/[\n\r\t]/g, '_').slice(0, 200), error);
       }
     }
 
@@ -193,7 +193,7 @@ export class WorkspacePack {
 
       return [];
     } catch (error) {
-      console.warn(`Failed to access path ${String(targetPath).replace(/[\n\r\t]/g, '_').slice(0, 200)}:`, error);
+      console.warn('Failed to access path %s:', String(targetPath).replace(/[\n\r\t]/g, '_').slice(0, 200), error);
       return [];
     }
   }
@@ -230,7 +230,7 @@ export class WorkspacePack {
 
       return filePaths;
     } catch (error) {
-      console.warn(`Failed to read directory ${String(directoryPath).replace(/[\n\r\t]/g, '_').slice(0, 200)}:`, error);
+      console.warn('Failed to read directory %s:', String(directoryPath).replace(/[\n\r\t]/g, '_').slice(0, 200), error);
       return [];
     }
   }

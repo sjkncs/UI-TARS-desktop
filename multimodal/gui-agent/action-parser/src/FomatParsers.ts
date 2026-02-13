@@ -9,6 +9,43 @@ import { XMLBuilder, XMLParser } from 'fast-xml-parser';
 import { ActionParserHelper } from './ActionParserHelper';
 import { serializeAction } from '@gui-agent/shared/utils';
 
+/** ReDoS-safe: extract content of an XML-like tag (case-insensitive option, supports attributes) */
+function safeTagContent(text: string, tagName: string, ci = false): string | null {
+  const src = ci ? text.toLowerCase() : text;
+  const openStart = src.indexOf(ci ? '<' + tagName.toLowerCase() : '<' + tagName);
+  if (openStart === -1) return null;
+  const openEnd = src.indexOf('>', openStart);
+  if (openEnd === -1) return null;
+  const from = openEnd + 1;
+  const closeTag = ci ? '</' + tagName.toLowerCase() : '</' + tagName;
+  const closeStart = src.indexOf(closeTag, from);
+  if (closeStart === -1) return null;
+  return text.slice(from, closeStart);
+}
+
+/** ReDoS-safe: extract content from startMarker up to the earliest endMarker (or end of string) */
+function safeUntil(text: string, startMarker: string, endMarkers: string[]): string | null {
+  const s = text.indexOf(startMarker);
+  if (s === -1) return null;
+  const from = s + startMarker.length;
+  let to = text.length;
+  for (const m of endMarkers) {
+    const idx = text.indexOf(m, from);
+    if (idx !== -1 && idx < to) to = idx;
+  }
+  return text.slice(from, to);
+}
+
+/** ReDoS-safe: extract content between two markers */
+function safeBetween(text: string, startMarker: string, endMarker: string): string | null {
+  const s = text.indexOf(startMarker);
+  if (s === -1) return null;
+  const from = s + startMarker.length;
+  const e = text.indexOf(endMarker, from);
+  if (e === -1) return null;
+  return text.slice(from, e);
+}
+
 export interface FormatParser {
   parse(text: string): {
     reasoningContent: string | null;
@@ -130,17 +167,17 @@ export class OmniFormatParser implements FormatParser {
     }
 
     // this.logger.debug('[OmniFormatParser] start...');
-    const thinkMatch = text.match(/<think[^>]*>([\s\S]*?)<\/think\s*>/i);
-    const reasoningContent = thinkMatch ? thinkMatch[1].trim() : null;
+    const thinkBody = safeTagContent(text, 'think', true);
+    const reasoningContent = thinkBody !== null ? thinkBody.trim() : null;
 
     let actionStr = '';
-    const computerEnvMatch = text.match(/<computer_env>([\s\S]*?)<\/computer_env>/i);
-    if (computerEnvMatch) {
-      actionStr = computerEnvMatch[1].trim();
+    const envBody = safeTagContent(text, 'computer_env', true);
+    if (envBody !== null) {
+      actionStr = envBody.trim();
       actionStr = actionStr.replace(/^Action:\s*/i, '');
     } else {
-      const answerMatch = text.match(/<answer>([\s\S]*?)<\/answer>/i);
-      const finishContent = answerMatch?.[1]?.trim();
+      const answerBody = safeTagContent(text, 'answer', true);
+      const finishContent = answerBody?.trim();
       actionStr = `finished(content='${finishContent}')`;
     }
 
@@ -196,9 +233,8 @@ export class UnifiedBCFormatParser implements FormatParser {
     // this.logger.debug('[UnifiedBCFormatParser] start parsing...');
 
     // Parse thought content - this part remains unchanged
-    // const thoughtMatch = text.match(/Thought:\s*([\s\S]+?)(?=Action[：:]|$)/);
-    const thoughtMatch = text.match(/Thought:\s*([\s\S]+?)(?=Action:|$)/);
-    const reasoningContent = thoughtMatch ? thoughtMatch[1].trim() : null;
+    const thoughtBody = safeUntil(text, 'Thought:', ['Action:']);
+    const reasoningContent = thoughtBody !== null ? thoughtBody.trim() : null;
 
     // Parse action content
     let actionStr = '';
@@ -256,18 +292,17 @@ class BCComplexFormatParser implements FormatParser {
     let actionStr = '';
 
     if (text.startsWith('Reflection:')) {
-      const reflectionMatch = text.match(
-        /Reflection:\s*([\s\S]+?)Action_Summary:\s*([\s\S]+?)(?=Action[：:]|$)/,
-      );
-      if (reflectionMatch) {
-        reflection = reflectionMatch[1].trim();
-        thought = reflectionMatch[2].trim();
+      const reflBody = safeUntil(text, 'Reflection:', ['Action_Summary:']);
+      const summBody = safeUntil(text, 'Action_Summary:', ['Action:', 'Action：']);
+      if (reflBody !== null && summBody !== null) {
+        reflection = reflBody.trim();
+        thought = summBody.trim();
         this.logger.debug('[BCComplexFormatParser] Reflection and Action_Summary');
       }
     } else if (text.startsWith('Action_Summary:')) {
-      const summaryMatch = text.match(/Action_Summary:\s*([\s\S]+?)(?=Action[：:]|$)/);
-      if (summaryMatch) {
-        thought = summaryMatch[1].trim();
+      const summBody2 = safeUntil(text, 'Action_Summary:', ['Action:', 'Action：']);
+      if (summBody2 !== null) {
+        thought = summBody2.trim();
         this.logger.debug('[BCComplexFormatParser] Only Action_Summary');
       }
     }
@@ -313,13 +348,13 @@ class O1FormatParser implements FormatParser {
       return null;
     }
 
-    const thoughtMatch = text.match(/<Thought>([\s\S]*?)<\/Thought>/s);
-    const actionSummaryMatch = text.match(/Action_Summary:\s*([\s\S]*?)Action:/s);
-    const actionMatch = text.match(/Action:\s*([\s\S]*?)<\/Output>/s);
+    const thoughtBody = safeTagContent(text, 'Thought');
+    const asSummary = safeBetween(text, 'Action_Summary:', 'Action:');
+    const actionBody = safeBetween(text, 'Action:', '</Output>');
 
-    const thoughtContent = thoughtMatch ? thoughtMatch[1].trim() : null;
-    const actionSummaryContent = actionSummaryMatch ? actionSummaryMatch[1].trim() : null;
-    const actionContent = actionMatch ? actionMatch[1].trim() : '';
+    const thoughtContent = thoughtBody !== null ? thoughtBody.trim() : null;
+    const actionSummaryContent = asSummary !== null ? asSummary.trim() : null;
+    const actionContent = actionBody !== null ? actionBody.trim() : '';
 
     // const thought = actionSummaryContent
     //   ? `${thoughtContent}\n<Action_Summary>\n${actionSummaryContent}`
@@ -367,8 +402,8 @@ class FallbackFormatParser implements FormatParser {
     const actionStr = actionMatch[0].trim();
 
     // Parse thought content
-    const thoughtMatch = text.match(/Thought:\s*([\s\S]+?)(?=Action[：:]|$)/);
-    const thoughtStr = thoughtMatch ? thoughtMatch[1].trim() : null;
+    const fbThought = safeUntil(text, 'Thought:', ['Action:', 'Action：']);
+    const thoughtStr = fbThought !== null ? fbThought.trim() : null;
 
     // Check special cases
     // const hasChineseColon = text.includes('Action：');

@@ -353,7 +353,7 @@ export async function generateSummary(req: Request, res: Response) {
     // Return the summary
     res.status(200).json(summaryResponse);
   } catch (error) {
-    console.error(`Error generating summary for session ${sanitizeForLog(sessionId)}:`, error);
+    console.error('Error generating summary for session %s:', sanitizeForLog(sessionId), error);
     res.status(500).json({
       error: 'Failed to generate summary',
       message: error instanceof Error ? error.message : String(error),
@@ -386,7 +386,7 @@ export async function shareSession(req: Request, res: Response) {
       });
     }
   } catch (error) {
-    console.error(`Error sharing session ${sanitizeForLog(sessionId)}:`, error);
+    console.error('Error sharing session %s:', sanitizeForLog(sessionId), error);
     return res.status(500).json({ error: 'Failed to share session' });
   }
 }
@@ -517,7 +517,7 @@ export async function getSessionWorkspaceFiles(req: Request, res: Response) {
 
     return res.status(400).json({ error: 'Invalid path type' });
   } catch (error) {
-    console.error(`Error accessing workspace files for session ${sanitizeForLog(sessionId)}:`, error);
+    console.error('Error accessing workspace files for session %s:', sanitizeForLog(sessionId), error);
     res.status(500).json({
       error: 'Failed to access workspace files',
       message: error instanceof Error ? error.message : String(error),
@@ -566,7 +566,7 @@ export async function searchWorkspaceItems(req: Request, res: Response) {
 
     res.status(200).json({ items: limitedItems });
   } catch (error) {
-    console.error(`Error searching workspace items for session ${sanitizeForLog(sessionId)}:`, error);
+    console.error('Error searching workspace items for session %s:', sanitizeForLog(sessionId), error);
     res.status(500).json({
       error: 'Failed to search workspace items',
       message: error instanceof Error ? error.message : String(error),
@@ -787,7 +787,7 @@ export async function validateWorkspacePaths(req: Request, res: Response) {
     // This could allow attackers to inject malicious content into logs.
     // Solution: Use structured logging or sanitize the sessionId before logging.
     // Example: console.error('Error validating workspace paths:', { sessionId: sessionId?.substring(0, 8) + '***' }, error);
-    console.error(`Error validating workspace paths for session ${sanitizeForLog(sessionId)}:`, error);
+    console.error('Error validating workspace paths for session %s:', sanitizeForLog(sessionId), error);
     res.status(500).json({
       error: 'Failed to validate workspace paths',
       message: error instanceof Error ? error.message : String(error),

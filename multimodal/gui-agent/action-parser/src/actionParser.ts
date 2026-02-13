@@ -13,6 +13,43 @@ import {
 } from '@ui-tars/shared/types';
 import isNumber from 'lodash.isnumber';
 
+/** ReDoS-safe: extract content of an XML-like tag (case-insensitive, supports attributes) */
+function safeTagContent(text: string, tagName: string, ci = false): string | null {
+  const src = ci ? text.toLowerCase() : text;
+  const openStart = src.indexOf(ci ? '<' + tagName.toLowerCase() : '<' + tagName);
+  if (openStart === -1) return null;
+  const openEnd = src.indexOf('>', openStart);
+  if (openEnd === -1) return null;
+  const from = openEnd + 1;
+  const closeTag = ci ? '</' + tagName.toLowerCase() : '</' + tagName;
+  const closeStart = src.indexOf(closeTag, from);
+  if (closeStart === -1) return null;
+  return text.slice(from, closeStart);
+}
+
+/** ReDoS-safe: extract content from startMarker up to the earliest endMarker (or end of string) */
+function safeUntil(text: string, startMarker: string, endMarkers: string[]): string | null {
+  const s = text.indexOf(startMarker);
+  if (s === -1) return null;
+  const from = s + startMarker.length;
+  let to = text.length;
+  for (const m of endMarkers) {
+    const idx = text.indexOf(m, from);
+    if (idx !== -1 && idx < to) to = idx;
+  }
+  return text.slice(from, to);
+}
+
+/** ReDoS-safe: extract content between two markers */
+function safeBetween(text: string, startMarker: string, endMarker: string): string | null {
+  const s = text.indexOf(startMarker);
+  if (s === -1) return null;
+  const from = s + startMarker.length;
+  const e = text.indexOf(endMarker, from);
+  if (e === -1) return null;
+  return text.slice(from, e);
+}
+
 function roundByFactor(num: number, factor: number): number {
   return Math.round(num / factor) * factor;
 }
@@ -95,16 +132,12 @@ export function actionStringParser(prediction: string): string[] {
   let thought: string | null = null;
   let actionStr = '';
 
-  const thinkMatch = text.match(/<think[^>]*>([\s\S]*?)<\/think\s*>/i);
-  const computerEnvMatch = text.match(/<computer_env>([\s\S]*?)<\/computer_env>/i);
-  if (thinkMatch && computerEnvMatch) {
-    if (thinkMatch) {
-      thought = thinkMatch[1].trim();
-    }
-    if (computerEnvMatch) {
-      actionStr = computerEnvMatch[1].trim();
-      actionStr = actionStr.replace(/^Action:\s*/i, '');
-    }
+  const thinkContent = safeTagContent(text, 'think', true);
+  const computerEnvContent = safeTagContent(text, 'computer_env', true);
+  if (thinkContent !== null && computerEnvContent !== null) {
+    thought = thinkContent.trim();
+    actionStr = computerEnvContent.trim();
+    actionStr = actionStr.replace(/^Action:\s*/i, '');
   }
   if (actionStr !== '') {
     return actionStr.split('\n\n');
@@ -112,23 +145,22 @@ export function actionStringParser(prediction: string): string[] {
 
   // Parse thought/reflection based on different text patterns
   if (text.includes('Thought:')) {
-    const thoughtMatch = text.match(/Thought: ([\s\S]+?)(?=Action[:：]|$)/);
+    const thoughtContent2 = safeUntil(text, 'Thought: ', ['Action:', 'Action：']);
 
-    if (thoughtMatch) {
-      thought = thoughtMatch[1].trim();
+    if (thoughtContent2 !== null) {
+      thought = thoughtContent2.trim();
     }
   } else if (text.startsWith('Reflection:')) {
-    const reflectionMatch = text.match(
-      /Reflection: ([\s\S]+?)Action_Summary: ([\s\S]+?)(?=Action[:：]|$)/,
-    );
-    if (reflectionMatch) {
-      thought = reflectionMatch[2].trim();
-      reflection = reflectionMatch[1].trim();
+    const reflContent = safeUntil(text, 'Reflection: ', ['Action_Summary: ']);
+    const summContent = safeUntil(text, 'Action_Summary: ', ['Action:', 'Action：']);
+    if (reflContent !== null && summContent !== null) {
+      thought = summContent.trim();
+      reflection = reflContent.trim();
     }
   } else if (text.startsWith('Action_Summary:')) {
-    const summaryMatch = text.match(/Action_Summary: (.+?)(?=Action[:：]|$)/);
-    if (summaryMatch) {
-      thought = summaryMatch[1].trim();
+    const summaryContent = safeUntil(text, 'Action_Summary: ', ['Action:', 'Action：']);
+    if (summaryContent !== null) {
+      thought = summaryContent.trim();
     }
   }
 
@@ -142,13 +174,13 @@ export function actionStringParser(prediction: string): string[] {
   }
 
   // Parse o1 format
-  const thoughtMatch = text.match(/<Thought>([\s\S]*?)<\/Thought>/);
-  const actionSummaryMatch = text.match(/\nAction_Summary:\s*([\s\S]*?)Action:/);
-  const actionMatch = text.match(/\nAction:\s*([\s\S]*?)<\/Output>/);
+  const o1ThoughtContent = safeTagContent(text, 'Thought');
+  const o1ActionSummary = safeBetween(text, '\nAction_Summary:', 'Action:');
+  const o1ActionContent = safeBetween(text, '\nAction:', '</Output>');
 
-  const thoughtContent = thoughtMatch ? thoughtMatch[1] : null;
-  const actionSummaryContent = actionSummaryMatch ? actionSummaryMatch[1] : null;
-  const actionContent = actionMatch ? actionMatch[1] : null;
+  const thoughtContent = o1ThoughtContent;
+  const actionSummaryContent = o1ActionSummary ? o1ActionSummary.trim() : null;
+  const actionContent = o1ActionContent ? o1ActionContent.trim() : null;
 
   thought = `${thoughtContent}\n<Action_Summary>\n${actionSummaryContent}`;
   actionStr = actionContent || '';
@@ -183,23 +215,22 @@ export function parseActionVlm(
   if (mode === 'bc') {
     // Parse thought/reflection based on different text patterns
     if (text.includes('Thought:')) {
-      const thoughtMatch = text.match(/Thought: ([\s\S]+?)(?=Action[:：]|$)/);
+      const thoughtContent2 = safeUntil(text, 'Thought: ', ['Action:', 'Action：']);
 
-      if (thoughtMatch) {
-        thought = thoughtMatch[1].trim();
+      if (thoughtContent2 !== null) {
+        thought = thoughtContent2.trim();
       }
     } else if (text.startsWith('Reflection:')) {
-      const reflectionMatch = text.match(
-        /Reflection: ([\s\S]+?)Action_Summary: ([\s\S]+?)(?=Action[:：]|$)/,
-      );
-      if (reflectionMatch) {
-        thought = reflectionMatch[2].trim();
-        reflection = reflectionMatch[1].trim();
+      const reflContent = safeUntil(text, 'Reflection: ', ['Action_Summary: ']);
+      const summContent = safeUntil(text, 'Action_Summary: ', ['Action:', 'Action：']);
+      if (reflContent !== null && summContent !== null) {
+        thought = summContent.trim();
+        reflection = reflContent.trim();
       }
     } else if (text.startsWith('Action_Summary:')) {
-      const summaryMatch = text.match(/Action_Summary: (.+?)(?=Action[:：]|$)/);
-      if (summaryMatch) {
-        thought = summaryMatch[1].trim();
+      const summaryContent = safeUntil(text, 'Action_Summary: ', ['Action:', 'Action：']);
+      if (summaryContent !== null) {
+        thought = summaryContent.trim();
       }
     }
 
@@ -212,28 +243,24 @@ export function parseActionVlm(
     }
   } else if (mode === 'o1') {
     // Parse o1 format
-    const thoughtMatch = text.match(/<Thought>([\s\S]*?)<\/Thought>/);
-    const actionSummaryMatch = text.match(/\nAction_Summary:\s*([\s\S]*?)Action:/);
-    const actionMatch = text.match(/\nAction:\s*([\s\S]*?)<\/Output>/);
+    const o1Thought = safeTagContent(text, 'Thought');
+    const o1ActionSummary = safeBetween(text, '\nAction_Summary:', 'Action:');
+    const o1Action = safeBetween(text, '\nAction:', '</Output>');
 
-    const thoughtContent = thoughtMatch ? thoughtMatch[1] : null;
-    const actionSummaryContent = actionSummaryMatch ? actionSummaryMatch[1] : null;
-    const actionContent = actionMatch ? actionMatch[1] : null;
+    const thoughtContent = o1Thought;
+    const actionSummaryContent = o1ActionSummary ? o1ActionSummary.trim() : null;
+    const actionContent = o1Action ? o1Action.trim() : null;
 
     thought = `${thoughtContent}\n<Action_Summary>\n${actionSummaryContent}`;
     actionStr = actionContent || '';
   }
 
-  const thinkMatch = text.match(/<think[^>]*>([\s\S]*?)<\/think\s*>/i);
-  const computerEnvMatch = text.match(/<computer_env>([\s\S]*?)<\/computer_env>/i);
-  if (thinkMatch && computerEnvMatch) {
-    if (thinkMatch) {
-      thought = thinkMatch[1].trim();
-    }
-    if (computerEnvMatch) {
-      actionStr = computerEnvMatch[1].trim();
-      actionStr = actionStr.replace(/^Action:\s*/i, '');
-    }
+  const vlmThinkContent = safeTagContent(text, 'think', true);
+  const vlmEnvContent = safeTagContent(text, 'computer_env', true);
+  if (vlmThinkContent !== null && vlmEnvContent !== null) {
+    thought = vlmThinkContent.trim();
+    actionStr = vlmEnvContent.trim();
+    actionStr = actionStr.replace(/^Action:\s*/i, '');
   }
 
   // Parse actions

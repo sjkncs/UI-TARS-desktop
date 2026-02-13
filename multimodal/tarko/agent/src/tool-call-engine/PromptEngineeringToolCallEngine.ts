@@ -697,13 +697,21 @@ ${JSON.stringify(schema)}
   } {
     const toolCalls: ChatCompletionMessageToolCall[] = [];
 
-    // Match <tool_call>...</tool_call> blocks
-    const toolCallRegex = /<tool_call>([^]*?)<\/tool_call>/g;
-    let match;
-    let cleanedContent = content;
+    // Extract <tool_call>...</tool_call> blocks using indexOf (ReDoS-safe)
+    const OPEN_TAG = '<tool_call>';
+    const CLOSE_TAG = '</tool_call>';
+    let searchFrom = 0;
+    const blockRanges: Array<[number, number]> = [];
 
-    while ((match = toolCallRegex.exec(content)) !== null) {
-      const toolCallContent = this.extractCleanJsonContent(match[1]);
+    while (searchFrom < content.length) {
+      const openIdx = content.indexOf(OPEN_TAG, searchFrom);
+      if (openIdx === -1) break;
+      const contentStart = openIdx + OPEN_TAG.length;
+      const closeIdx = content.indexOf(CLOSE_TAG, contentStart);
+      if (closeIdx === -1) break;
+
+      const toolCallContent = this.extractCleanJsonContent(content.slice(contentStart, closeIdx));
+      blockRanges.push([openIdx, closeIdx + CLOSE_TAG.length]);
 
       try {
         const toolCallData = JSON.parse(toolCallContent);
@@ -723,10 +731,16 @@ ${JSON.stringify(schema)}
       } catch (error) {
         this.logger.error('Failed to parse tool call JSON:', error);
       }
+
+      searchFrom = closeIdx + CLOSE_TAG.length;
     }
 
-    // Remove all tool call blocks from content
-    cleanedContent = content.replace(/<tool_call>[^]*?<\/tool_call>/g, '').trim();
+    // Remove all tool call blocks from content (iterate in reverse to preserve indices)
+    let cleanedContent = content;
+    for (let i = blockRanges.length - 1; i >= 0; i--) {
+      cleanedContent = cleanedContent.slice(0, blockRanges[i][0]) + cleanedContent.slice(blockRanges[i][1]);
+    }
+    cleanedContent = cleanedContent.trim();
 
     return { cleanedContent, extractedToolCalls: toolCalls };
   }

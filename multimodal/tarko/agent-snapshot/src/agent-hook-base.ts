@@ -48,7 +48,8 @@ export abstract class AgentHookBase {
     },
   ) {
     this.agent = agent;
-    this.snapshotPath = options.snapshotPath;
+    // Resolve path to prevent path traversal
+    this.snapshotPath = path.resolve(options.snapshotPath);
     this.snapshotName = options.snapshotName;
 
     // Create output directory
