@@ -9,6 +9,11 @@ import { AgentServer } from '../../server';
 import { AgentSession } from '../../core';
 
 const logger = getLogger('SessionRestoreMiddleware');
+
+/** Sanitize user input for safe logging */
+function sanitizeForLog(input: unknown): string {
+  return String(input).replace(/[\n\r\t]/g, '_').slice(0, 200);
+}
 /**
  * Session recovery middleware
  * If the session is not in memory but the storage is available, try to restore the session from storage
@@ -46,9 +51,9 @@ export async function sessionRestoreMiddleware(
             server.storageUnsubscribes[sessionId] = storageUnsubscribe;
           }
 
-          logger.debug(`Session ${sessionId} restored from storage`);
+          logger.debug(`Session ${sanitizeForLog(sessionId)} restored from storage`);
         } catch (error) {
-          logger.error(`Failed to restore session ${sessionId}:`, error);
+          logger.error(`Failed to restore session ${sanitizeForLog(sessionId)}:`, error);
 
           return res.status(200).json({
             sessionId,
