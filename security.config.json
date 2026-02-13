@@ -14,11 +14,8 @@
     "description": "仅本地访问，不对外网开放"
   },
   "workspace": {
-    "allowed": [
-      "C:\\Users\\Administrator\\.openclaw\\workspace",
-      "E:\\2026.2.github"
-    ],
-    "description": "允许操作的工作目录"
+    "allowed": [],
+    "description": "允许操作的工作目录（请在本地配置 security.config.local.json 覆盖此项）"
   },
   "blockedCommands": {
     "patterns": [
@@ -91,7 +88,7 @@
   },
   "audit": {
     "enabled": true,
-    "logPath": "C:\\Users\\Administrator\\.openclaw\\logs\\security-audit.log",
+    "logPath": "./logs/security-audit.log",
     "logLevel": "info",
     "recordOperations": true,
     "recordCommands": true,

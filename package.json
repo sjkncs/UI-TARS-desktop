@@ -20,7 +20,30 @@
     "prepare": "husky"
   },
   "pnpm": {
-    "patchedDependencies": {}
+    "patchedDependencies": {},
+    "overrides": {
+      "qs": ">=6.14.2",
+      "undici": ">=6.23.0",
+      "tar": ">=7.5.3",
+      "tar-fs": ">=3.1.1",
+      "micromatch": ">=4.0.8",
+      "body-parser": ">=2.2.1",
+      "lodash": ">=4.17.23",
+      "lodash-es": ">=4.17.23",
+      "js-yaml": ">=3.14.2",
+      "node-forge": ">=1.3.2",
+      "axios": ">=1.8.2",
+      "glob": ">=10.5.0",
+      "brace-expansion": ">=1.1.12",
+      "diff": ">=4.0.4",
+      "@babel/runtime": ">=7.26.10",
+      "@babel/helpers": ">=7.26.10",
+      "@mozilla/readability": ">=0.6.0",
+      "tmp": ">=0.2.4",
+      "mdast-util-to-hast": ">=13.2.1",
+      "happy-dom": ">=20.0.0",
+      "form-data": ">=4.0.1"
+    }
   },
   "devDependencies": {
     "@common/configs": "workspace:*",

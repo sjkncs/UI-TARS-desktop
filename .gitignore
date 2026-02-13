@@ -5,7 +5,6 @@ out
 .DS_Store
 *.log*
 .eslintcache
-.env
 test-results/
 coverage/
 .turbo/
@@ -13,3 +12,46 @@ scripts/merge-yml/*.yml
 .claude/
 .tarko
 .mcp*_token
+
+# Environment files — never commit secrets
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.cert
+*.crt
+id_rsa*
+*.keystore
+
+# Credential and token files
+*_token
+*.secret
+credentials.json
+service-account*.json
+
+# IDE and editor
+.idea/
+.vscode/settings.json
+*.swp
+*.swo
+*~
+
+# OS artifacts
+Thumbs.db
+Desktop.ini
+._*
+
+# Local security config overrides
+security.config.local.json
+logs/
+
+# Build artifacts
+*.tsbuildinfo
+*.ntvs_analysis.dat
