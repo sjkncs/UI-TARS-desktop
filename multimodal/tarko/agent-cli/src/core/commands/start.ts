@@ -90,17 +90,19 @@ export async function startInteractiveWebUI(
     );
 
     if (options.open) {
-      const url = `http://localhost:${port}`;
+      // Validate port is a safe integer to prevent shell injection
+      const safePort = Number.isInteger(Number(port)) && Number(port) > 0 && Number(port) < 65536
+        ? String(Number(port))
+        : '3000';
+      const url = `http://localhost:${safePort}`;
       const command =
         process.platform === 'darwin'
           ? 'open'
           : process.platform === 'win32'
             ? 'start'
             : 'xdg-open';
-      // Sanitize URL to prevent shell injection - only allow valid localhost URLs
-      const safeUrl = /^http:\/\/localhost:\d+$/.test(url) ? url : '';
-      if (safeUrl) {
-        exec(`${command} ${safeUrl}`, (err) => {
+      if (url) {
+        exec(`${command} ${url}`, (err) => {
           if (err) {
             console.error('Failed to open browser:', err.message);
           }

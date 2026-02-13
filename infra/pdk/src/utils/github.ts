@@ -118,10 +118,11 @@ export async function generateReleaseNotes(
       throw new Error('Invalid tag name characters detected');
     }
     const gitRange = previousTag ? `${previousTag}..${tagName}` : tagName;
-    const { stdout } = await execa(
-      `git log "${gitRange}" --pretty=format:'%H|%s|%an|%ae' --no-merges`,
-      { cwd, shell: true },
-    );
+    // Use array form to avoid shell injection — pass arguments separately
+    const gitArgs = previousTag
+      ? ['log', gitRange, "--pretty=format:%H|%s|%an|%ae", '--no-merges']
+      : ['log', tagName, "--pretty=format:%H|%s|%an|%ae", '--no-merges'];
+    const { stdout } = await execa('git', gitArgs, { cwd });
 
     if (!stdout.trim()) {
       return `## What's Changed\n\nNo changes found.`;
