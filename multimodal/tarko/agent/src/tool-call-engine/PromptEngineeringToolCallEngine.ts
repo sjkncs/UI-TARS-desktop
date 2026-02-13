@@ -698,7 +698,7 @@ ${JSON.stringify(schema)}
     const toolCalls: ChatCompletionMessageToolCall[] = [];
 
     // Match <tool_call>...</tool_call> blocks
-    const toolCallRegex = /<tool_call>([\s\S]*?)<\/tool_call>/g;
+    const toolCallRegex = /<tool_call>([^]*?)<\/tool_call>/g;
     let match;
     let cleanedContent = content;
 
@@ -726,7 +726,7 @@ ${JSON.stringify(schema)}
     }
 
     // Remove all tool call blocks from content
-    cleanedContent = content.replace(/<tool_call>[\s\S]*?<\/tool_call>/g, '').trim();
+    cleanedContent = content.replace(/<tool_call>[^]*?<\/tool_call>/g, '').trim();
 
     return { cleanedContent, extractedToolCalls: toolCalls };
   }
