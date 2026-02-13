@@ -8,7 +8,7 @@ import path from 'node:path';
 import yaml from 'js-yaml';
 import type { ForgeHookMap } from '@electron-forge/shared-types';
 
-const artifactRegex = /.*\.(?:exe|dmg|AppImage|zip)$/;
+const artifactRegex = /\.(?:exe|dmg|AppImage|zip)$/;
 const platformNamesMap = {
   darwin: 'macos',
   linux: 'linux',

@@ -23,7 +23,7 @@ function generateToolCallId(): string {
  */
 function extractThinkContent(content: string): string {
   // Match think or think_* tags with a single regex
-  const thinkMatch = content.match(/<think[^>]*>([\s\S]*?)<\/think[^>]*>/);
+  const thinkMatch = content.match(/<think[^>]*>([\s\S]*?)<\/think\s*>/);
   return thinkMatch ? thinkMatch[1].trim() : '';
 }
 
@@ -58,7 +58,7 @@ function finalizeAnswer(parsed: {
     let contentWithoutThink = content;
 
     if (think) {
-      contentWithoutThink = content.replace(/<think[^>]*>[\s\S]*?<\/think[^>]*>/g, '').trim();
+      contentWithoutThink = content.replace(/<think[^>]*>[\s\S]*?<\/think\s*>/g, '').trim();
     }
 
     if (contentWithoutThink) {
@@ -140,7 +140,7 @@ export function parseMcpContent(c: string): ParsedContent {
 
     // Extract function calls between FunctionCallBegin and FunctionCallEnd
     const functionCallMatch = mcpEnvContent.match(
-      /<\|FunctionCallBegin\|>\s*(\[[\s\S]*?\])\s*<\|FunctionCallEnd\|>/,
+      /<\|FunctionCallBegin\|>\s*(\[[\s\S]*?\])<\|FunctionCallEnd\|>/,
     );
     if (functionCallMatch) {
       try {

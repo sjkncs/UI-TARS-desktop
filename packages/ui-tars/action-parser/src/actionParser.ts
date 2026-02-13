@@ -121,7 +121,7 @@ export function parseActionVlm(
     // Parse thought/reflection based on different text patterns
     if (text.includes('Thought:')) {
       const thoughtMatch = text.match(
-        /Thought: ([\s\S]+?)(?=\s*Action[:：]|$)/,
+        /Thought: ([\s\S]+?)(?=Action[:：]|$)/,
       );
 
       if (thoughtMatch) {
@@ -129,7 +129,7 @@ export function parseActionVlm(
       }
     } else if (text.startsWith('Reflection:')) {
       const reflectionMatch = text.match(
-        /Reflection: ([\s\S]+?)Action_Summary: ([\s\S]+?)(?=\s*Action[:：]|$)/,
+        /Reflection: ([\s\S]+?)Action_Summary: ([\s\S]+?)(?=Action[:：]|$)/,
       );
       if (reflectionMatch) {
         thought = reflectionMatch[2].trim();
@@ -137,7 +137,7 @@ export function parseActionVlm(
       }
     } else if (text.startsWith('Action_Summary:')) {
       const summaryMatch = text.match(
-        /Action_Summary: (.+?)(?=\s*Action[:：]|$)/,
+        /Action_Summary: (.+?)(?=Action[:：]|$)/,
       );
       if (summaryMatch) {
         thought = summaryMatch[1].trim();
@@ -153,11 +153,11 @@ export function parseActionVlm(
     }
   } else if (mode === 'o1') {
     // Parse o1 format
-    const thoughtMatch = text.match(/<Thought>\s*(.*?)\s*<\/Thought>/);
+    const thoughtMatch = text.match(/<Thought>([\s\S]*?)<\/Thought>/);
     const actionSummaryMatch = text.match(
-      /\nAction_Summary:\s*(.*?)\s*Action:/,
+      /\nAction_Summary:\s*([\s\S]*?)Action:/,
     );
-    const actionMatch = text.match(/\nAction:\s*(.*?)\s*<\/Output>/);
+    const actionMatch = text.match(/\nAction:\s*([\s\S]*?)<\/Output>/);
 
     const thoughtContent = thoughtMatch ? thoughtMatch[1] : null;
     const actionSummaryContent = actionSummaryMatch

@@ -130,7 +130,7 @@ export class OmniFormatParser implements FormatParser {
     }
 
     // this.logger.debug('[OmniFormatParser] start...');
-    const thinkMatch = text.match(/<think[^>]*>([\s\S]*?)<\/think[^>]*>/i);
+    const thinkMatch = text.match(/<think[^>]*>([\s\S]*?)<\/think\s*>/i);
     const reasoningContent = thinkMatch ? thinkMatch[1].trim() : null;
 
     let actionStr = '';
@@ -196,8 +196,8 @@ export class UnifiedBCFormatParser implements FormatParser {
     // this.logger.debug('[UnifiedBCFormatParser] start parsing...');
 
     // Parse thought content - this part remains unchanged
-    // const thoughtMatch = text.match(/Thought:\s*([\s\S]+?)(?=\s*Action[：:]|$)/);
-    const thoughtMatch = text.match(/Thought:\s*([\s\S]+?)(?=\s*Action:|$)/);
+    // const thoughtMatch = text.match(/Thought:\s*([\s\S]+?)(?=Action[：:]|$)/);
+    const thoughtMatch = text.match(/Thought:\s*([\s\S]+?)(?=Action:|$)/);
     const reasoningContent = thoughtMatch ? thoughtMatch[1].trim() : null;
 
     // Parse action content
@@ -257,7 +257,7 @@ class BCComplexFormatParser implements FormatParser {
 
     if (text.startsWith('Reflection:')) {
       const reflectionMatch = text.match(
-        /Reflection:\s*([\s\S]+?)Action_Summary:\s*([\s\S]+?)(?=\s*Action[：:]|$)/,
+        /Reflection:\s*([\s\S]+?)Action_Summary:\s*([\s\S]+?)(?=Action[：:]|$)/,
       );
       if (reflectionMatch) {
         reflection = reflectionMatch[1].trim();
@@ -265,7 +265,7 @@ class BCComplexFormatParser implements FormatParser {
         this.logger.debug('[BCComplexFormatParser] Reflection and Action_Summary');
       }
     } else if (text.startsWith('Action_Summary:')) {
-      const summaryMatch = text.match(/Action_Summary:\s*([\s\S]+?)(?=\s*Action[：:]|$)/);
+      const summaryMatch = text.match(/Action_Summary:\s*([\s\S]+?)(?=Action[：:]|$)/);
       if (summaryMatch) {
         thought = summaryMatch[1].trim();
         this.logger.debug('[BCComplexFormatParser] Only Action_Summary');
@@ -313,9 +313,9 @@ class O1FormatParser implements FormatParser {
       return null;
     }
 
-    const thoughtMatch = text.match(/<Thought>\s*([\s\S]*?)\s*<\/Thought>/s);
-    const actionSummaryMatch = text.match(/Action_Summary:\s*([\s\S]*?)\s*Action:/s);
-    const actionMatch = text.match(/Action:\s*([\s\S]*?)\s*<\/Output>/s);
+    const thoughtMatch = text.match(/<Thought>([\s\S]*?)<\/Thought>/s);
+    const actionSummaryMatch = text.match(/Action_Summary:\s*([\s\S]*?)Action:/s);
+    const actionMatch = text.match(/Action:\s*([\s\S]*?)<\/Output>/s);
 
     const thoughtContent = thoughtMatch ? thoughtMatch[1].trim() : null;
     const actionSummaryContent = actionSummaryMatch ? actionSummaryMatch[1].trim() : null;
@@ -367,7 +367,7 @@ class FallbackFormatParser implements FormatParser {
     const actionStr = actionMatch[0].trim();
 
     // Parse thought content
-    const thoughtMatch = text.match(/Thought:\s*([\s\S]+?)(?=\s*Action[：:]|$)/);
+    const thoughtMatch = text.match(/Thought:\s*([\s\S]+?)(?=Action[：:]|$)/);
     const thoughtStr = thoughtMatch ? thoughtMatch[1].trim() : null;
 
     // Check special cases
