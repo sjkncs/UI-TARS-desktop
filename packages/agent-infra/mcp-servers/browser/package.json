@@ -49,7 +49,7 @@
   "dependencies": {
     "@agent-infra/logger": "workspace:*",
     "@agent-infra/browser-context": "0.1.2",
-    "@modelcontextprotocol/sdk": "~1.15.1",
+    "@modelcontextprotocol/sdk": "^1.24.0",
     "@ui-tars/action-parser": "workspace:^",
     "mcp-http-server": "workspace:^",
     "puppeteer-core": "24.7.2"

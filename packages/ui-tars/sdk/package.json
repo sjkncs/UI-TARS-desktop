@@ -75,6 +75,6 @@
     "@vitejs/plugin-react": "^4.3.4",
     "vitest-browser-react": "^0.1.1",
     "@types/async-retry": "1.4.9",
-    "happy-dom": "^17.1.1"
+    "happy-dom": "^20.0.0"
   }
 }
