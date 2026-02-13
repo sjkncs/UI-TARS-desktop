@@ -63,7 +63,11 @@
       "json5": ">=2.2.3",
       "xml2js": ">=0.6.2",
       "nanoid": ">=3.3.8",
-      "fast-xml-parser": ">=4.5.1"
+      "fast-xml-parser": ">=4.5.1",
+      "express-ws>ws": ">=8.17.1",
+      "express>cookie": ">=0.7.2",
+      "express>send": ">=1.2.0",
+      "express>serve-static": ">=2.2.0"
     }
   },
   "devDependencies": {
