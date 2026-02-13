@@ -65,9 +65,7 @@ export class AgentUIBuilder {
       if (filePath) {
         // Ensure directory exists
         const dir = path.dirname(filePath);
-        if (!fs.existsSync(dir)) {
-          fs.mkdirSync(dir, { recursive: true });
-        }
+        fs.mkdirSync(dir, { recursive: true });
 
         // Write HTML to file
         fs.writeFileSync(filePath, htmlContent, 'utf8');
