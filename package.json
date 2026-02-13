@@ -42,7 +42,12 @@
       "tmp": ">=0.2.4",
       "mdast-util-to-hast": ">=13.2.1",
       "happy-dom": ">=20.0.0",
-      "form-data": ">=4.0.4"
+      "form-data": ">=4.0.4",
+      "@octokit/request-error": ">=5.1.1",
+      "@octokit/plugin-paginate-rest": ">=9.2.2",
+      "@octokit/request": ">=8.4.1",
+      "@smithy/config-resolver": ">=4.4.0",
+      "min-document": ">=2.19.1"
     }
   },
   "devDependencies": {
