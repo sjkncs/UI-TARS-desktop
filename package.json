@@ -55,7 +55,13 @@
       "@modelcontextprotocol/sdk": ">=1.24.0",
       "@langchain/core": ">=0.3.80",
       "electron": ">=35.7.5",
-      "@electron/node-gyp": "npm:node-gyp@^10.2.0"
+      "@electron/node-gyp": "npm:node-gyp@^10.2.0",
+      "cross-spawn": ">=7.0.6",
+      "tough-cookie": ">=5.1.2",
+      "follow-redirects": ">=1.15.10",
+      "path-to-regexp": ">=8.2.0",
+      "json5": ">=2.2.3",
+      "xml2js": ">=0.6.2"
     }
   },
   "devDependencies": {
