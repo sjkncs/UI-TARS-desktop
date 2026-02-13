@@ -61,9 +61,7 @@ export class AgentSnapshot {
     });
 
     // Create directory if it doesn't exist
-    if (!fs.existsSync(this.snapshotPath)) {
-      fs.mkdirSync(this.snapshotPath, { recursive: true });
-    }
+    fs.mkdirSync(this.snapshotPath, { recursive: true });
 
     const agentSnapshotProto = Object.getPrototypeOf(this);
     const methodsToPreserve: Record<string, Function> = {};

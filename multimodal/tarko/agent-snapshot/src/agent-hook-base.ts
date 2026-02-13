@@ -52,9 +52,7 @@ export abstract class AgentHookBase {
     this.snapshotName = options.snapshotName;
 
     // Create output directory
-    if (!fs.existsSync(this.snapshotPath)) {
-      fs.mkdirSync(this.snapshotPath, { recursive: true });
-    }
+    fs.mkdirSync(this.snapshotPath, { recursive: true });
   }
 
   /**

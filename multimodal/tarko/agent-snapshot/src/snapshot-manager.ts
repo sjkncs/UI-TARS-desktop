@@ -429,18 +429,20 @@ export class SnapshotManager {
       await fs.promises.mkdir(dirPath, { recursive: true });
     }
 
-    // Check if file already exists and shouldn't be updated
-    if (fs.existsSync(filePath) && !updateIfExists) {
-      logger.info(`Skipping write to existing file: ${filePath}`);
-      return;
-    }
-
     try {
       // Serialize each chunk as a separate JSON line
       const chunksAsJsonLines = chunks.map((chunk) => JSON.stringify(chunk)).join('\n');
-      await fs.promises.writeFile(filePath, chunksAsJsonLines, 'utf-8');
+      // Use 'wx' flag for atomic check-and-create when not updating existing files
+      await fs.promises.writeFile(filePath, chunksAsJsonLines, {
+        encoding: 'utf-8',
+        flag: updateIfExists ? 'w' : 'wx',
+      });
       logger.info(`Stream chunks written to ${filePath} (${chunks.length} chunks)`);
     } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'EEXIST') {
+        logger.info(`Skipping write to existing file: ${filePath}`);
+        return;
+      }
       logger.error(`Error writing stream chunks to ${filePath}: ${error}`);
       throw error;
     }

@@ -130,7 +130,7 @@ function handleDirectoryListing(
     const breadcrumb = relativePath ? relativePath.split(path.sep) : [];
 
     // Add session context to the listing
-    const sessionContext = sessionId ? ` (Session: ${sessionId})` : '';
+    const sessionContext = sessionId ? ` (Session: ${String(sessionId).replace(/[\n\r\t<>"'&]/g, '_').slice(0, 100)})` : '';
     const html = generateDirectoryListingHTML(
       files,
       req.path,
