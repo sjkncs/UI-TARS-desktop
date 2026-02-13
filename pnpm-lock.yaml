@@ -34,7 +34,7 @@ overrides:
   vite: '>=6.3.0'
   react-router: '>=7.5.2'
   esbuild: '>=0.25.0'
-  playwright: '>=1.50.1'
+  playwright: '>=1.55.1'
   '@modelcontextprotocol/sdk': '>=1.24.0'
   '@langchain/core': '>=0.3.80'
   electron: '>=35.7.5'
@@ -1567,7 +1567,7 @@ importers:
         version: 3.0.5(@types/debug@4.1.12)(@types/node@24.10.13)(@vitest/browser@3.0.5)(happy-dom@20.6.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.29.2)(msw@2.7.0(@types/node@24.10.13)(typescript@5.7.3))(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0)
       vitest-browser-react:
         specifier: ^0.1.1
-        version: 0.1.1(@types/react-dom@19.1.1(@types/react@19.1.2))(@types/react@19.1.2)(@vitest/browser@3.0.5(@types/node@24.10.13)(bufferutil@4.0.9)(playwright@1.50.1)(typescript@5.7.3)(utf-8-validate@6.0.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.4.2)(lightningcss@1.29.2)(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0))(vitest@3.0.5))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vitest@3.0.5(@types/debug@4.1.12)(@types/node@24.10.13)(@vitest/browser@3.0.5)(happy-dom@20.6.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.29.2)(msw@2.7.0(@types/node@24.10.13)(typescript@5.7.3))(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0))
+        version: 0.1.1(@types/react-dom@19.1.1(@types/react@19.1.2))(@types/react@19.1.2)(@vitest/browser@3.0.5(@types/node@24.10.13)(bufferutil@4.0.9)(playwright@1.58.2)(typescript@5.7.3)(utf-8-validate@6.0.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.4.2)(lightningcss@1.29.2)(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0))(vitest@3.0.5))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vitest@3.0.5(@types/debug@4.1.12)(@types/node@24.10.13)(@vitest/browser@3.0.5)(happy-dom@20.6.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.29.2)(msw@2.7.0(@types/node@24.10.13)(typescript@5.7.3))(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0))
 
   packages/ui-tars/shared:
     devDependencies:
@@ -5311,7 +5311,7 @@ packages:
   '@vitest/browser@3.0.5':
     resolution: {integrity: sha512-5WAWJoucuWcGYU5t0HPBY03k9uogbUEIu4pDmZHoB4Dt+6pXqzDbzEmxGjejZSitSYA3k/udYfuotKNxETVA3A==}
     peerDependencies:
-      playwright: '>=1.50.1'
+      playwright: '>=1.55.1'
       safaridriver: '*'
       vitest: 3.0.5
       webdriverio: '*'
@@ -8482,11 +8482,6 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  nanoid@3.3.8:
-    resolution: {integrity: sha512-WNLf5Sd8oZxOm+TzppcYk8gVOgP+l58xNy58D0nbUnOxOWRWvlcCV4kUF7ltmI6PsrLl/BgKEyS4mqsGChFN0w==}
-    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
-    hasBin: true
-
   natural-compare-lite@1.4.0:
     resolution: {integrity: sha512-Tj+HTDSJJKaZnfiuw+iaF9skdPpTo2GtEly5JHnWV/hfv2Qj/9RKsGISQtLh2ox3l5EAGw487hnBee0sIJ6v2g==}
 
@@ -8980,13 +8975,13 @@ packages:
     resolution: {integrity: sha512-ueGLflrrnvwB3xuo/uGob5pd5FN7l0MsLf0Z87o/UQmRtwjvfylfc9MurIxRAWywCYTgrvpXBcqjV4OfCYGCIQ==}
     engines: {node: '>=16.20.0'}
 
-  playwright-core@1.50.1:
-    resolution: {integrity: sha512-ra9fsNWayuYumt+NiM069M6OkcRb1FZSK8bgi66AtpFoWkg2+y0bJSNmkFrWhMbEBbVKC/EruAHH3g0zmtwGmQ==}
+  playwright-core@1.58.2:
+    resolution: {integrity: sha512-yZkEtftgwS8CsfYo7nm0KE8jsvm6i/PTgVtB8DL726wNf6H2IMsDuxCpJj59KDaxCtSnrWan2AeDqM7JBaultg==}
     engines: {node: '>=18'}
     hasBin: true
 
-  playwright@1.50.1:
-    resolution: {integrity: sha512-G8rwsOQJ63XG6BbKj2w5rHeavFjy5zynBA9zsJMMtBoe/Uf757oG12NXz6e6OirF7RCrTVAKFXbLmn1RbL7Qaw==}
+  playwright@1.58.2:
+    resolution: {integrity: sha512-vA30H8Nvkq/cPBnNw4Q8TWz1EJyqgpuinBcHET0YVJVFldr8JDNiU9LaWAE1KqSkRYazuaBhTpB5ZzShOezQ6A==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -9016,10 +9011,6 @@ packages:
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
     engines: {node: '>= 0.4'}
-
-  postcss@8.5.3:
-    resolution: {integrity: sha512-dle9A3yYxlBSrt8Fu+IpjGT8SY8hN0mlaA6GY8t0P5PjIOZemULz/E2Bnm/2dcUOena75OTNkHI76uZBNUUq3A==}
-    engines: {node: ^10 || ^12 || >=14}
 
   postcss@8.5.6:
     resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
@@ -13969,7 +13960,7 @@ snapshots:
 
   '@playwright/test@1.50.1':
     dependencies:
-      playwright: 1.50.1
+      playwright: 1.58.2
 
   '@polka/url@1.0.0-next.28': {}
 
@@ -16113,7 +16104,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/browser@3.0.5(@types/node@24.10.13)(bufferutil@4.0.9)(playwright@1.50.1)(typescript@5.7.3)(utf-8-validate@6.0.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.4.2)(lightningcss@1.29.2)(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0))(vitest@3.0.5)':
+  '@vitest/browser@3.0.5(@types/node@24.10.13)(bufferutil@4.0.9)(playwright@1.58.2)(typescript@5.7.3)(utf-8-validate@6.0.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.4.2)(lightningcss@1.29.2)(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0))(vitest@3.0.5)':
     dependencies:
       '@testing-library/dom': 10.4.0
       '@testing-library/user-event': 14.6.1(@testing-library/dom@10.4.0)
@@ -16126,7 +16117,7 @@ snapshots:
       vitest: 3.0.5(@types/debug@4.1.12)(@types/node@24.10.13)(@vitest/browser@3.0.5)(happy-dom@20.6.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.29.2)(msw@2.7.0(@types/node@24.10.13)(typescript@5.7.3))(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0)
       ws: 8.18.3(bufferutil@4.0.9)(utf-8-validate@6.0.5)
     optionalDependencies:
-      playwright: 1.50.1
+      playwright: 1.58.2
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -16134,7 +16125,7 @@ snapshots:
       - utf-8-validate
       - vite
 
-  '@vitest/browser@3.0.5(@types/node@24.10.13)(bufferutil@4.0.9)(playwright@1.50.1)(typescript@5.7.3)(utf-8-validate@6.0.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.4.2)(lightningcss@1.29.2)(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.3)(yaml@2.7.0))(vitest@3.0.5)':
+  '@vitest/browser@3.0.5(@types/node@24.10.13)(bufferutil@4.0.9)(playwright@1.58.2)(typescript@5.7.3)(utf-8-validate@6.0.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.4.2)(lightningcss@1.29.2)(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.3)(yaml@2.7.0))(vitest@3.0.5)':
     dependencies:
       '@testing-library/dom': 10.4.0
       '@testing-library/user-event': 14.6.1(@testing-library/dom@10.4.0)
@@ -16147,7 +16138,7 @@ snapshots:
       vitest: 3.0.5(@types/debug@4.1.12)(@types/node@24.10.13)(@vitest/browser@3.0.5)(happy-dom@20.6.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.29.2)(msw@2.7.0(@types/node@24.10.13)(typescript@5.7.3))(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.3)(yaml@2.7.0)
       ws: 8.18.3(bufferutil@4.0.9)(utf-8-validate@6.0.5)
     optionalDependencies:
-      playwright: 1.50.1
+      playwright: 1.58.2
     transitivePeerDependencies:
       - '@types/node'
       - bufferutil
@@ -16426,7 +16417,7 @@ snapshots:
       '@vue/shared': 3.5.13
       estree-walker: 2.0.2
       magic-string: 0.30.17
-      postcss: 8.5.3
+      postcss: 8.5.6
       source-map-js: 1.2.1
     optional: true
 
@@ -20086,9 +20077,6 @@ snapshots:
 
   nanoid@3.3.11: {}
 
-  nanoid@3.3.8:
-    optional: true
-
   natural-compare-lite@1.4.0: {}
 
   natural-compare@1.4.0: {}
@@ -20579,11 +20567,11 @@ snapshots:
 
   pkce-challenge@5.0.0: {}
 
-  playwright-core@1.50.1: {}
+  playwright-core@1.58.2: {}
 
-  playwright@1.50.1:
+  playwright@1.58.2:
     dependencies:
-      playwright-core: 1.50.1
+      playwright-core: 1.58.2
     optionalDependencies:
       fsevents: 2.3.2
 
@@ -20604,13 +20592,6 @@ snapshots:
   pngjs@7.0.0: {}
 
   possible-typed-array-names@1.1.0: {}
-
-  postcss@8.5.3:
-    dependencies:
-      nanoid: 3.3.8
-      picocolors: 1.1.1
-      source-map-js: 1.2.1
-    optional: true
 
   postcss@8.5.6:
     dependencies:
@@ -22684,9 +22665,9 @@ snapshots:
       tsx: 4.19.3
       yaml: 2.7.0
 
-  vitest-browser-react@0.1.1(@types/react-dom@19.1.1(@types/react@19.1.2))(@types/react@19.1.2)(@vitest/browser@3.0.5(@types/node@24.10.13)(bufferutil@4.0.9)(playwright@1.50.1)(typescript@5.7.3)(utf-8-validate@6.0.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.4.2)(lightningcss@1.29.2)(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0))(vitest@3.0.5))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vitest@3.0.5(@types/debug@4.1.12)(@types/node@24.10.13)(@vitest/browser@3.0.5)(happy-dom@20.6.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.29.2)(msw@2.7.0(@types/node@24.10.13)(typescript@5.7.3))(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0)):
+  vitest-browser-react@0.1.1(@types/react-dom@19.1.1(@types/react@19.1.2))(@types/react@19.1.2)(@vitest/browser@3.0.5(@types/node@24.10.13)(bufferutil@4.0.9)(playwright@1.58.2)(typescript@5.7.3)(utf-8-validate@6.0.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.4.2)(lightningcss@1.29.2)(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0))(vitest@3.0.5))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vitest@3.0.5(@types/debug@4.1.12)(@types/node@24.10.13)(@vitest/browser@3.0.5)(happy-dom@20.6.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.29.2)(msw@2.7.0(@types/node@24.10.13)(typescript@5.7.3))(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0)):
     dependencies:
-      '@vitest/browser': 3.0.5(@types/node@24.10.13)(bufferutil@4.0.9)(playwright@1.50.1)(typescript@5.7.3)(utf-8-validate@6.0.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.4.2)(lightningcss@1.29.2)(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0))(vitest@3.0.5)
+      '@vitest/browser': 3.0.5(@types/node@24.10.13)(bufferutil@4.0.9)(playwright@1.58.2)(typescript@5.7.3)(utf-8-validate@6.0.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.4.2)(lightningcss@1.29.2)(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0))(vitest@3.0.5)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       vitest: 3.0.5(@types/debug@4.1.12)(@types/node@24.10.13)(@vitest/browser@3.0.5)(happy-dom@20.6.1(bufferutil@4.0.9)(utf-8-validate@6.0.5))(jiti@2.4.2)(jsdom@26.1.0(bufferutil@4.0.9)(utf-8-validate@6.0.5))(lightningcss@1.29.2)(msw@2.7.0(@types/node@24.10.13)(typescript@5.7.3))(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0)
@@ -22719,7 +22700,7 @@ snapshots:
     optionalDependencies:
       '@types/debug': 4.1.12
       '@types/node': 24.10.13
-      '@vitest/browser': 3.0.5(@types/node@24.10.13)(bufferutil@4.0.9)(playwright@1.50.1)(typescript@5.7.3)(utf-8-validate@6.0.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.4.2)(lightningcss@1.29.2)(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0))(vitest@3.0.5)
+      '@vitest/browser': 3.0.5(@types/node@24.10.13)(bufferutil@4.0.9)(playwright@1.58.2)(typescript@5.7.3)(utf-8-validate@6.0.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.4.2)(lightningcss@1.29.2)(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.2)(yaml@2.7.0))(vitest@3.0.5)
       happy-dom: 20.6.1(bufferutil@4.0.9)(utf-8-validate@6.0.5)
       jsdom: 26.1.0(bufferutil@4.0.9)(utf-8-validate@6.0.5)
     transitivePeerDependencies:
@@ -22761,7 +22742,7 @@ snapshots:
     optionalDependencies:
       '@types/debug': 4.1.12
       '@types/node': 24.10.13
-      '@vitest/browser': 3.0.5(@types/node@24.10.13)(bufferutil@4.0.9)(playwright@1.50.1)(typescript@5.7.3)(utf-8-validate@6.0.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.4.2)(lightningcss@1.29.2)(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.3)(yaml@2.7.0))(vitest@3.0.5)
+      '@vitest/browser': 3.0.5(@types/node@24.10.13)(bufferutil@4.0.9)(playwright@1.58.2)(typescript@5.7.3)(utf-8-validate@6.0.5)(vite@7.3.1(@types/node@24.10.13)(jiti@2.4.2)(lightningcss@1.29.2)(sass-embedded@1.83.4)(sass@1.85.1)(tsx@4.19.3)(yaml@2.7.0))(vitest@3.0.5)
       happy-dom: 20.6.1(bufferutil@4.0.9)(utf-8-validate@6.0.5)
       jsdom: 26.1.0(bufferutil@4.0.9)(utf-8-validate@6.0.5)
     transitivePeerDependencies:
