@@ -58,6 +58,6 @@
     "@types/lodash-es": "4.17.12",
     "@types/react": "19.1.2",
     "@types/react-dom": "19.1.1",
-    "electron": "34.1.1"
+    "electron": "35.7.5"
   }
 }
