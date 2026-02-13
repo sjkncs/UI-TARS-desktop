@@ -11,6 +11,49 @@ interface ParsedContent {
   tools: ChatCompletionMessageToolCall[];
 }
 
+/** ReDoS-safe: extract content of an XML-like tag (case-insensitive option, supports attributes) */
+function safeTagContent(text: string, tagName: string, ci = false): string | null {
+  const src = ci ? text.toLowerCase() : text;
+  const openStart = src.indexOf(ci ? '<' + tagName.toLowerCase() : '<' + tagName);
+  if (openStart === -1) return null;
+  const openEnd = src.indexOf('>', openStart);
+  if (openEnd === -1) return null;
+  const from = openEnd + 1;
+  const closeTag = ci ? '</' + tagName.toLowerCase() : '</' + tagName;
+  const closeStart = src.indexOf(closeTag, from);
+  if (closeStart === -1) return null;
+  return text.slice(from, closeStart);
+}
+
+/** ReDoS-safe: extract content between two markers */
+function safeBetween(text: string, startMarker: string, endMarker: string): string | null {
+  const s = text.indexOf(startMarker);
+  if (s === -1) return null;
+  const from = s + startMarker.length;
+  const e = text.indexOf(endMarker, from);
+  if (e === -1) return null;
+  return text.slice(from, e);
+}
+
+/** ReDoS-safe: remove all occurrences of a tag and its content */
+function safeRemoveTag(text: string, tagName: string): string {
+  let result = text;
+  const lowerResult = () => result.toLowerCase();
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const lr = lowerResult();
+    const openStart = lr.indexOf('<' + tagName.toLowerCase());
+    if (openStart === -1) break;
+    const closeTag = '</' + tagName.toLowerCase();
+    const closeStart = lr.indexOf(closeTag, openStart);
+    if (closeStart === -1) break;
+    const closeEnd = lr.indexOf('>', closeStart);
+    if (closeEnd === -1) break;
+    result = result.slice(0, openStart) + result.slice(closeEnd + 1);
+  }
+  return result;
+}
+
 /**
  * Generate a unique tool call ID
  */
@@ -22,9 +65,8 @@ function generateToolCallId(): string {
  * Extract think content from various think tags (think, think_*, or custom think tags)
  */
 function extractThinkContent(content: string): string {
-  // Match think or think_* tags with a single regex
-  const thinkMatch = content.match(/<think[^>]*>([\s\S]*?)<\/think\s*>/);
-  return thinkMatch ? thinkMatch[1].trim() : '';
+  const body = safeTagContent(content, 'think');
+  return body !== null ? body.trim() : '';
 }
 
 /**
@@ -32,9 +74,9 @@ function extractThinkContent(content: string): string {
  */
 function extractAnswerContent(content: string): string | null {
   // First try to extract from <answer> tag
-  const answerMatch = content.match(/<answer>([\s\S]*?)<\/answer>/);
-  if (answerMatch) {
-    return answerMatch[1].trim();
+  const body = safeTagContent(content, 'answer');
+  if (body !== null) {
+    return body.trim();
   }
 
   return null;
@@ -58,7 +100,7 @@ function finalizeAnswer(parsed: {
     let contentWithoutThink = content;
 
     if (think) {
-      contentWithoutThink = content.replace(/<think[^>]*>[\s\S]*?<\/think\s*>/g, '').trim();
+      contentWithoutThink = safeRemoveTag(content, 'think').trim();
     }
 
     if (contentWithoutThink) {
@@ -85,32 +127,43 @@ export function parseCodeContent(c: string): ParsedContent {
   const tools: ChatCompletionMessageToolCall[] = [];
 
   // Extract code_env function calls
-  const codeEnvMatch = content.match(/<code_env>([\s\S]*?)<\/code_env>/);
-  if (codeEnvMatch) {
-    const codeEnvContent = codeEnvMatch[1];
+  const codeEnvBody = safeTagContent(content, 'code_env');
+  if (codeEnvBody !== null) {
+    const codeEnvContent = codeEnvBody;
 
     // Extract function name
-    const functionMatch = codeEnvContent.match(/<function=([^>]+)>/);
-    if (functionMatch) {
-      const functionName = functionMatch[1];
+    const functionStart = codeEnvContent.indexOf('<function=');
+    if (functionStart !== -1) {
+      const functionEnd = codeEnvContent.indexOf('>', functionStart);
+      if (functionEnd !== -1) {
+        const functionName = codeEnvContent.slice(functionStart + '<function='.length, functionEnd);
 
-      // Extract parameters
-      const parameters: Record<string, string> = {};
-      const parameterMatches = codeEnvContent.matchAll(
-        /<parameter=([^>]+)>([\s\S]*?)<\/parameter>/g,
-      );
-      for (const match of parameterMatches) {
-        parameters[match[1]] = match[2].trim();
+        // Extract parameters
+        const parameters: Record<string, string> = {};
+        let paramSearch = 0;
+        while (paramSearch < codeEnvContent.length) {
+          const pOpen = codeEnvContent.indexOf('<parameter=', paramSearch);
+          if (pOpen === -1) break;
+          const pNameEnd = codeEnvContent.indexOf('>', pOpen);
+          if (pNameEnd === -1) break;
+          const pName = codeEnvContent.slice(pOpen + '<parameter='.length, pNameEnd);
+          const pCloseTag = '</parameter>';
+          const pClose = codeEnvContent.indexOf(pCloseTag, pNameEnd + 1);
+          if (pClose === -1) break;
+          const pValue = codeEnvContent.slice(pNameEnd + 1, pClose);
+          parameters[pName] = pValue.trim();
+          paramSearch = pClose + pCloseTag.length;
+        }
+
+        tools.push({
+          id: generateToolCallId(),
+          type: 'function' as const,
+          function: {
+            name: functionName,
+            arguments: JSON.stringify(parameters),
+          },
+        });
       }
-
-      tools.push({
-        id: generateToolCallId(),
-        type: 'function' as const,
-        function: {
-          name: functionName,
-          arguments: JSON.stringify(parameters),
-        },
-      });
     }
   }
 
@@ -134,14 +187,13 @@ export function parseMcpContent(c: string): ParsedContent {
   const tools: ChatCompletionMessageToolCall[] = [];
 
   // Extract mcp_env function calls
-  const mcpEnvMatch = content.match(/<mcp_env>([\s\S]*?)<\/mcp_env>/);
-  if (mcpEnvMatch) {
-    const mcpEnvContent = mcpEnvMatch[1];
+  const mcpEnvBody = safeTagContent(content, 'mcp_env');
+  if (mcpEnvBody !== null) {
+    const mcpEnvContent = mcpEnvBody;
 
-    // Extract function calls between FunctionCallBegin and FunctionCallEnd
-    const functionCallMatch = mcpEnvContent.match(
-      /<\|FunctionCallBegin\|>\s*(\[[\s\S]*?\])<\|FunctionCallEnd\|>/,
-    );
+    // Extract function calls between FunctionCallBegin and FunctionCallEnd (ReDoS-safe)
+    const fcBody = safeBetween(mcpEnvContent, '<|FunctionCallBegin|>', '<|FunctionCallEnd|>');
+    const functionCallMatch = fcBody !== null ? fcBody.trim().match(/^(\[.*\])$/s) : null;
     if (functionCallMatch) {
       try {
         const functionCallData = JSON.parse(functionCallMatch[1]) as Array<{
@@ -185,9 +237,9 @@ export function parseComputerContent(content: string): ParsedContent {
   const tools: ChatCompletionMessageToolCall[] = [];
 
   // Extract computer_env actions
-  const computerEnvMatch = content.match(/<computer_env>([\s\S]*?)<\/computer_env>/);
-  if (computerEnvMatch) {
-    const computerEnvContent = computerEnvMatch[1].trim();
+  const computerEnvBody = safeTagContent(content, 'computer_env');
+  if (computerEnvBody !== null) {
+    const computerEnvContent = computerEnvBody.trim();
 
     // Parse action format: Action: click(point='<point>100 200</point>')
     const actionMatch = computerEnvContent.match(/Action:\s*(\w+)\(([^)]*)\)/);

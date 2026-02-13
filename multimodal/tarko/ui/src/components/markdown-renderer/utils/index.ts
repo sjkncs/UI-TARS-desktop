@@ -6,14 +6,9 @@
  * Preprocess markdown links to handle special cases
  */
 export const preprocessMarkdownLinks = (content: string): string => {
-  // Handle image links with markdown syntax
-  return content.replace(
-    /!\[([^\]]*)\]\(([^)\s]+)\)/g,
-    (match, alt, src) => {
-      // Keep the original markdown syntax for images
-      return match;
-    }
-  );
+  // No-op: image links are kept as-is in markdown syntax.
+  // Previously used a regex that CodeQL flagged as ReDoS-vulnerable.
+  return content;
 };
 
 /**

@@ -13,6 +13,41 @@ import {
 } from '@ui-tars/shared/types';
 import isNumber from 'lodash.isnumber';
 
+/** ReDoS-safe: extract content from startMarker up to the earliest endMarker (or end of string) */
+function safeUntil(text: string, startMarker: string, endMarkers: string[]): string | null {
+  const s = text.indexOf(startMarker);
+  if (s === -1) return null;
+  const from = s + startMarker.length;
+  let to = text.length;
+  for (const m of endMarkers) {
+    const idx = text.indexOf(m, from);
+    if (idx !== -1 && idx < to) to = idx;
+  }
+  return text.slice(from, to);
+}
+
+/** ReDoS-safe: extract content of an XML-like tag */
+function safeTagContent(text: string, tagName: string): string | null {
+  const openStart = text.indexOf('<' + tagName);
+  if (openStart === -1) return null;
+  const openEnd = text.indexOf('>', openStart);
+  if (openEnd === -1) return null;
+  const from = openEnd + 1;
+  const closeStart = text.indexOf('</' + tagName, from);
+  if (closeStart === -1) return null;
+  return text.slice(from, closeStart);
+}
+
+/** ReDoS-safe: extract content between two markers */
+function safeBetween(text: string, startMarker: string, endMarker: string): string | null {
+  const s = text.indexOf(startMarker);
+  if (s === -1) return null;
+  const from = s + startMarker.length;
+  const e = text.indexOf(endMarker, from);
+  if (e === -1) return null;
+  return text.slice(from, e);
+}
+
 function roundByFactor(num: number, factor: number): number {
   return Math.round(num / factor) * factor;
 }
@@ -120,27 +155,22 @@ export function parseActionVlm(
   if (mode === 'bc') {
     // Parse thought/reflection based on different text patterns
     if (text.includes('Thought:')) {
-      const thoughtMatch = text.match(
-        /Thought: ([\s\S]+?)(?=Action[:：]|$)/,
-      );
+      const thoughtBody = safeUntil(text, 'Thought: ', ['Action:', 'Action：']);
 
-      if (thoughtMatch) {
-        thought = thoughtMatch[1].trim();
+      if (thoughtBody !== null) {
+        thought = thoughtBody.trim();
       }
     } else if (text.startsWith('Reflection:')) {
-      const reflectionMatch = text.match(
-        /Reflection: ([\s\S]+?)Action_Summary: ([\s\S]+?)(?=Action[:：]|$)/,
-      );
-      if (reflectionMatch) {
-        thought = reflectionMatch[2].trim();
-        reflection = reflectionMatch[1].trim();
+      const reflBody = safeUntil(text, 'Reflection: ', ['Action_Summary: ']);
+      const summBody = safeUntil(text, 'Action_Summary: ', ['Action:', 'Action：']);
+      if (reflBody !== null && summBody !== null) {
+        thought = summBody.trim();
+        reflection = reflBody.trim();
       }
     } else if (text.startsWith('Action_Summary:')) {
-      const summaryMatch = text.match(
-        /Action_Summary: (.+?)(?=Action[:：]|$)/,
-      );
-      if (summaryMatch) {
-        thought = summaryMatch[1].trim();
+      const summaryBody = safeUntil(text, 'Action_Summary: ', ['Action:', 'Action：']);
+      if (summaryBody !== null) {
+        thought = summaryBody.trim();
       }
     }
 
@@ -152,18 +182,16 @@ export function parseActionVlm(
       actionStr = actionParts[actionParts.length - 1];
     }
   } else if (mode === 'o1') {
-    // Parse o1 format
-    const thoughtMatch = text.match(/<Thought>([\s\S]*?)<\/Thought>/);
-    const actionSummaryMatch = text.match(
-      /\nAction_Summary:\s*([\s\S]*?)Action:/,
-    );
-    const actionMatch = text.match(/\nAction:\s*([\s\S]*?)<\/Output>/);
+    // Parse o1 format (ReDoS-safe)
+    const o1Thought = safeTagContent(text, 'Thought');
+    const o1ActionSummary = safeBetween(text, '\nAction_Summary:', 'Action:');
+    const o1Action = safeBetween(text, '\nAction:', '</Output>');
 
-    const thoughtContent = thoughtMatch ? thoughtMatch[1] : null;
-    const actionSummaryContent = actionSummaryMatch
-      ? actionSummaryMatch[1]
+    const thoughtContent = o1Thought;
+    const actionSummaryContent = o1ActionSummary
+      ? o1ActionSummary.trim()
       : null;
-    const actionContent = actionMatch ? actionMatch[1] : null;
+    const actionContent = o1Action ? o1Action.trim() : null;
 
     thought = `${thoughtContent}\n<Action_Summary>\n${actionSummaryContent}`;
     actionStr = actionContent || '';

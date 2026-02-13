@@ -389,10 +389,20 @@ class FallbackFormatParser implements FormatParser {
   } | null {
     this.logger.debug('[FallbackFormatParser] canParse: always true');
 
-    // Try to parse the action string with function call format
-    // const actionMatch = text.match(/Action[：:]?\s*([\s\S]*?)(?=\s*<\/Output>|$)/s);
-    const regex = /\w+\([^)]*\)/;
-    const actionMatch = text.match(regex);
+    // Try to parse the action string with function call format (ReDoS-safe indexOf)
+    const parenOpen = text.indexOf('(');
+    const parenClose = parenOpen !== -1 ? text.indexOf(')', parenOpen) : -1;
+    let actionMatchStr: string | null = null;
+    if (parenOpen > 0 && parenClose !== -1) {
+      // Walk back from '(' to find the function name (word chars)
+      let nameStart = parenOpen - 1;
+      while (nameStart >= 0 && /\w/.test(text[nameStart])) nameStart--;
+      nameStart++;
+      if (nameStart < parenOpen) {
+        actionMatchStr = text.slice(nameStart, parenClose + 1);
+      }
+    }
+    const actionMatch = actionMatchStr ? [actionMatchStr] : null;
 
     if (!actionMatch) {
       this.logger.error('[FallbackFormatParser] there is no function call format in the text');

@@ -171,7 +171,7 @@ export async function getSessionDetails(req: Request, res: Response) {
 
     return res.status(404).json({ error: 'Session not found' });
   } catch (error) {
-    console.error(`Error getting session details for ${sanitizeForLog(sessionId)}:`, error);
+    console.error('Error getting session details for %s:', sanitizeForLog(sessionId), error);
     res.status(500).json({ error: 'Failed to get session details' });
   }
 }
@@ -196,7 +196,7 @@ export async function getSessionEvents(req: Request, res: Response) {
     const events = await server.storageProvider.getSessionEvents(sessionId);
     res.status(200).json({ events });
   } catch (error) {
-    console.error(`Error getting events for session ${sanitizeForLog(sessionId)}:`, error);
+    console.error('Error getting events for session %s:', sanitizeForLog(sessionId), error);
     res.status(500).json({ error: 'Failed to get session events' });
   }
 }
@@ -224,7 +224,7 @@ export async function getSessionStatus(req: Request, res: Response) {
       },
     });
   } catch (error) {
-    console.error(`Error getting session status (${sanitizeForLog(sessionId)}):`, error);
+    console.error('Error getting session status (%s):', sanitizeForLog(sessionId), error);
     res.status(500).json({ error: 'Failed to get session status' });
   }
 }
@@ -263,7 +263,7 @@ export async function updateSession(req: Request, res: Response) {
 
     res.status(200).json({ session: updatedMetadata });
   } catch (error) {
-    console.error(`Error updating session ${sanitizeForLog(sessionId)}:`, error);
+    console.error('Error updating session %s:', sanitizeForLog(sessionId), error);
     res.status(500).json({ error: 'Failed to update session' });
   }
 }
@@ -291,7 +291,9 @@ export async function deleteSession(req: Request, res: Response) {
         }
       } catch (error) {
         console.warn(
-          `Failed to cleanup agent for session ${sanitizeForLog(sessionId)}: ${error instanceof Error ? error.message : String(error)}`,
+          'Failed to cleanup agent for session %s: %s',
+          sanitizeForLog(sessionId),
+          error instanceof Error ? error.message : String(error),
         );
       }
 
@@ -315,7 +317,7 @@ export async function deleteSession(req: Request, res: Response) {
 
     res.status(200).json({ success: true });
   } catch (error) {
-    console.error(`Error deleting session ${sanitizeForLog(sessionId)}:`, error);
+    console.error('Error deleting session %s:', sanitizeForLog(sessionId), error);
     res.status(500).json({ error: 'Failed to delete session' });
   }
 }

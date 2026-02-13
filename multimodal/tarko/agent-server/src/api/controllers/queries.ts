@@ -87,7 +87,7 @@ export async function executeQuery(req: Request, res: Response) {
     }
   } catch (error) {
     // This should never happen with the new error handling, but just in case
-    console.error(`Unexpected error processing query in session ${sanitizeForLog(sessionId)}:`, error);
+    console.error('Unexpected error processing query in session %s:', sanitizeForLog(sessionId), error);
     res.status(500).json(createErrorResponse(error));
   }
 }
@@ -162,7 +162,7 @@ export async function executeStreamingQuery(req: Request, res: Response) {
     }
   } catch (error) {
     // This should almost never happen with the new error handling
-    console.error(`Critical error in streaming query for session ${sanitizeForLog(sessionId)}:`, error);
+    console.error('Critical error in streaming query for session %s:', sanitizeForLog(sessionId), error);
 
     if (!res.headersSent) {
       res.status(500).json(createErrorResponse(error));
@@ -191,7 +191,7 @@ export async function abortQuery(req: Request, res: Response) {
     const aborted = await req.session!.abortQuery();
     res.status(200).json({ success: aborted });
   } catch (error) {
-    console.error(`Error aborting query in session ${sanitizeForLog(sessionId)}:`, error);
+    console.error('Error aborting query in session %s:', sanitizeForLog(sessionId), error);
     res.status(500).json({ error: 'Failed to abort query' });
   }
 }
