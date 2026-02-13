@@ -116,7 +116,7 @@ export class AgentSession {
         const savePromise = this.server.storageProvider
           .saveEvent(this.id, event)
           .catch((error) => {
-            console.error('Failed to save event to storage:', error);
+            console.error('Failed to save event to storage:', error instanceof Error ? error.constructor.name : 'unknown');
           })
           .finally(() => {
             this.pendingEventSaves.delete(savePromise);

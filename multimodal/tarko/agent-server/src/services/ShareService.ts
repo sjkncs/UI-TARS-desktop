@@ -163,7 +163,7 @@ export class ShareService {
         sessionId,
       };
     } catch (error) {
-      console.error('Error in shareSession for %s:', String(sessionId).replace(/[\n\r\t]/g, '_').slice(0, 200), error);
+      console.error('Error in shareSession:', error instanceof Error ? error.constructor.name : 'unknown');
       return {
         success: false,
         sessionId,

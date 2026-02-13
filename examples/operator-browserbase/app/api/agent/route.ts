@@ -50,7 +50,7 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log('sessionId:', String(sessionId).replace(/[\n\r\t]/g, '_'));
+    console.log('sessionId received');
     const operator = new BrowserbaseOperator({
       // browserbaseSessionID: sessionId,
       env: 'LOCAL',
