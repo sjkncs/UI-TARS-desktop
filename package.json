@@ -48,7 +48,7 @@
       "@octokit/request": ">=8.4.1",
       "@smithy/config-resolver": ">=4.4.0",
       "min-document": ">=2.19.1",
-      "vite": ">=5.4.15",
+      "vite": ">=6.3.0",
       "react-router": ">=7.5.2",
       "esbuild": ">=0.25.0",
       "playwright": ">=1.50.1",
