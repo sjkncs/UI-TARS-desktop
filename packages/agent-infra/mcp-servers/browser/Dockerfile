@@ -1,4 +1,4 @@
-FROM node:22@sha256:e558507eb799e3a76fcdaaee5e48dce1a00aebc85892128a9fca59f63bd49511 AS runtime
+FROM node:25@sha256:39f92e620aa34854b8877b43bdffd411a301a50eefb38400785a01991f25a2f6 AS runtime
 
 ENV \
     # Configure default locale (important for chrome-headless-shell).
