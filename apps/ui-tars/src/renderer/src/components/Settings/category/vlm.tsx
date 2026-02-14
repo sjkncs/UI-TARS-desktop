@@ -33,6 +33,7 @@ import { Alert, AlertDescription } from '@renderer/components/ui/alert';
 import { cn } from '@renderer/utils';
 
 import { PresetImport, PresetBanner } from './preset';
+import { CustomModelsManager } from './customModels';
 import { api } from '@/renderer/src/api';
 
 const formSchema = z.object({
@@ -286,6 +287,15 @@ export function VLMSettings({
             />
           )}
 
+          {/* Custom Model Presets */}
+          <CustomModelsManager />
+
+          <div className="border-t pt-6">
+            <h4 className="text-sm font-medium text-muted-foreground mb-4">
+              Active Model Configuration
+            </h4>
+          </div>
+
           {/* VLM Provider */}
           <FormField
             control={form.control}
@@ -395,7 +405,12 @@ export function VLMSettings({
               apiKey: newApiKey,
               modelName: newModelName,
             }}
-            onResponseApiSupportChange={setResponseApiSupported}
+            onResponseApiSupportChange={(supported) => {
+              setResponseApiSupported(supported);
+              if (!supported && form.getValues('useResponsesApi')) {
+                form.setValue('useResponsesApi', false);
+              }
+            }}
           />
 
           {/* VLM Model Responses API */}

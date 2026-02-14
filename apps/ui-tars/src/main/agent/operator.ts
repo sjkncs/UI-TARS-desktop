@@ -75,12 +75,22 @@ export class NutJSElectronOperator extends NutJSOperator {
 
     const screenshot = primarySource.thumbnail;
 
+    // Cap resolution at 1920px width to reduce base64 size for API
+    const maxWidth = 1920;
+    let targetWidth = physicalSize.width;
+    let targetHeight = physicalSize.height;
+    if (targetWidth > maxWidth) {
+      const ratio = maxWidth / targetWidth;
+      targetWidth = maxWidth;
+      targetHeight = Math.round(targetHeight * ratio);
+    }
+
     const resized = screenshot.resize({
-      width: physicalSize.width,
-      height: physicalSize.height,
+      width: targetWidth,
+      height: targetHeight,
     });
 
-    const base64 = resized.toJPEG(75).toString('base64');
+    const base64 = resized.toJPEG(50).toString('base64');
 
     if (optimizationConfig.isEnabled('enableOCR')) {
       this.performOCRAsync(base64).catch((error) => {
@@ -212,7 +222,7 @@ export class NutJSElectronOperator extends NutJSOperator {
             }
             return await super.execute(params);
           },
-          (result) => result !== undefined && result !== null,
+          () => true,
           { maxRetries: 2, baseDelay: 500 },
         );
       }

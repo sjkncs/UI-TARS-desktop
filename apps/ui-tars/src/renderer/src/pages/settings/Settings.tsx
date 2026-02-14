@@ -36,6 +36,7 @@ import { DragArea } from '@renderer/components/Common/drag';
 import { BROWSER_OPERATOR } from '@renderer/const';
 
 import { PresetImport } from './PresetImport';
+import { CustomModelsManager } from '@renderer/components/Settings/category/customModels';
 import { Tabs, TabsList, TabsTrigger } from '@renderer/components/ui/tabs';
 import { PresetBanner } from './PresetBanner';
 
@@ -290,6 +291,15 @@ export default function Settings() {
                     handleResetPreset={handleResetPreset}
                   />
                 )}
+                {/* Custom Model Presets */}
+                <CustomModelsManager />
+
+                <div className="border-t pt-6">
+                  <h4 className="text-sm font-medium text-muted-foreground mb-4">
+                    Active Model Configuration
+                  </h4>
+                </div>
+
                 {/* Model Settings Fields */}
                 <FormField
                   control={form.control}

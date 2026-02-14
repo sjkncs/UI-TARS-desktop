@@ -31,7 +31,7 @@ import {
 } from './Messages';
 
 const RunMessages = () => {
-  const { messages = [], thinking, errorMsg } = useStore();
+  const { messages = [], thinking, progressMessage, errorMsg } = useStore();
   const containerRef = React.useRef<HTMLDivElement>(null);
   const suggestions: string[] = [];
   const [selectImg, setSelectImg] = useState<number | undefined>(undefined);
@@ -149,7 +149,7 @@ const RunMessages = () => {
             );
           })}
 
-          {thinking && <LoadingText text={'Thinking...'} />}
+          {thinking && <LoadingText text={progressMessage || 'Thinking...'} />}
           {errorMsg && <ErrorMessage text={errorMsg} />}
         </div>
       </div>

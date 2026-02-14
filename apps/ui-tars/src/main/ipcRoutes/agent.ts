@@ -51,18 +51,19 @@ export const agentRoute = t.router({
     store.setState({
       abortController: new AbortController(),
       thinking: true,
+      progressMessage: 'Initializing agent...',
       errorMsg: null,
     });
 
     await runAgent(store.setState, store.getState);
 
-    store.setState({ thinking: false });
+    store.setState({ thinking: false, progressMessage: null });
   }),
   pauseRun: t.procedure.input<void>().handle(async () => {
     const guiAgent = GUIAgentManager.getInstance().getAgent();
     if (guiAgent instanceof GUIAgent) {
       guiAgent.pause();
-      store.setState({ thinking: false });
+      store.setState({ thinking: false, progressMessage: null });
     }
   }),
   resumeRun: t.procedure.input<void>().handle(async () => {
@@ -74,7 +75,11 @@ export const agentRoute = t.router({
   }),
   stopRun: t.procedure.input<void>().handle(async () => {
     const { abortController } = store.getState();
-    store.setState({ status: StatusEnum.END, thinking: false });
+    store.setState({
+      status: StatusEnum.END,
+      thinking: false,
+      progressMessage: null,
+    });
 
     showWindow();
 
@@ -107,6 +112,7 @@ export const agentRoute = t.router({
       status: StatusEnum.END,
       messages: [],
       thinking: false,
+      progressMessage: null,
       errorMsg: null,
       instructions: '',
     });

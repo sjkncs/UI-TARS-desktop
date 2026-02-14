@@ -4,7 +4,7 @@
  */
 import { GUIAgentData, Message } from '@ui-tars/shared/types';
 
-import { LocalStore, PresetSource } from './validate';
+import { LocalStore, PresetSource, CustomModelConfig } from './validate';
 import { ConversationWithSoM } from '@main/shared/types';
 
 export type NextAction =
@@ -32,6 +32,7 @@ export type AppState = {
   messages: ConversationWithSoM[];
   abortController: AbortController | null;
   thinking: boolean;
+  progressMessage: string | null;
   browserAvailable: boolean;
 };
 
@@ -63,4 +64,4 @@ export enum Operator {
   Chat = 'Chat',
 }
 
-export type { PresetSource, LocalStore };
+export type { PresetSource, LocalStore, CustomModelConfig };
