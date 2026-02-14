@@ -49,8 +49,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y python3-pip
-          pip3 install --upgrade pip==24.0 --require-hashes --no-deps --hash=sha256:ba0d021a166865d2265246961bec0152ff124de910c5cc39f1156ce3fa7c69dc
-          pip3 install uv==0.4.0 --require-hashes --no-deps --hash=sha256:85a94f21bebe4b3f452afe5fbc36ed326583c8b6cc7fe3091f5f571a727ed799
+          pip3 install --break-system-packages --upgrade pip==24.0
+          pip3 install --break-system-packages uv==0.4.0
       - name: Install dependencies
         run: pnpm install
       - name: Run MCP benchmark
