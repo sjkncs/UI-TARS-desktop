@@ -473,7 +473,7 @@ const ChatPage = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate max-w-36">{pendingImage.name}</span>
                 <span className="text-[10px] text-gray-400">{t('chat.imageUploaded')}</span>
               </div>
-              <button onClick={() => setPendingImage(null)} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+              <button title="Remove image" onClick={() => setPendingImage(null)} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                 <X className="w-3.5 h-3.5 text-gray-400" />
               </button>
             </div>
@@ -487,7 +487,7 @@ const ChatPage = () => {
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate max-w-36">{pendingDoc.name}</span>
                 <span className="text-[10px] text-gray-400">{t('chat.docUploaded')}</span>
               </div>
-              <button onClick={() => setPendingDoc(null)} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+              <button title="Remove document" onClick={() => setPendingDoc(null)} className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                 <X className="w-3.5 h-3.5 text-gray-400" />
               </button>
             </div>
@@ -496,8 +496,8 @@ const ChatPage = () => {
       )}
 
       {/* Hidden file inputs */}
-      <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,image/bmp" className="hidden" onChange={handleImageUpload} />
-      <input ref={docInputRef} type="file" accept=".pdf,.txt,.md,.doc,.docx,.csv,.json,.xml,.html,.htm,.log,.rtf" className="hidden" onChange={handleDocUpload} />
+      <input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,image/bmp" className="hidden" onChange={handleImageUpload} aria-label="Upload image" />
+      <input ref={docInputRef} type="file" accept=".pdf,.txt,.md,.doc,.docx,.csv,.json,.xml,.html,.htm,.log,.rtf" className="hidden" onChange={handleDocUpload} aria-label="Upload document" />
 
       {/* Unified input container */}
       <div
@@ -621,6 +621,7 @@ const ChatPage = () => {
             {/* 联网 (Web Search) */}
             <div ref={webSearchRef} className="relative">
               <button
+                title="Web search"
                 onClick={() => setShowWebSearchMenu(!showWebSearchMenu)}
                 disabled={isLoading}
                 className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors disabled:opacity-40 ${
@@ -660,6 +661,7 @@ const ChatPage = () => {
             {/* 上传 (Upload) — triggers attach menu */}
             <div ref={attachRef} className="relative">
               <button
+                title="Upload"
                 onClick={() => setShowAttachMenu(!showAttachMenu)}
                 disabled={isLoading}
                 className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300 transition-colors disabled:opacity-40"
