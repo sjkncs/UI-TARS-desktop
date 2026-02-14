@@ -54,9 +54,10 @@ export abstract class AgentHookBase {
     if (!resolvedSnapshotPath.startsWith(allowedBase + path.sep) && resolvedSnapshotPath !== allowedBase) {
       throw new Error('Snapshot path must be within the current working directory');
     }
-    // Re-construct safe path from allowedBase + validated relative portion
+    // Sanitize each path segment with path.basename to strip traversal components
     const relativePortion = path.relative(allowedBase, resolvedSnapshotPath);
-    const safePath = path.join(allowedBase, relativePortion);
+    const safeSegments = relativePortion.split(path.sep).map((s) => path.basename(s));
+    const safePath = path.join(allowedBase, ...safeSegments);
     this.snapshotPath = safePath;
     this.snapshotName = options.snapshotName;
 

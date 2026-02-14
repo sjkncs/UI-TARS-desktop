@@ -257,9 +257,13 @@ export class DOMElementNode extends DOMBaseNode {
           context.push('phone');
         } else if (href.startsWith('#')) {
           context.push('anchor');
-        } else if (href.toLowerCase().startsWith('javascript:')) {
-          context.push('javascript');
-          // Do not output javascript: URLs - skip href display for safety
+        } else if (
+          href.toLowerCase().startsWith('javascript:') ||
+          href.toLowerCase().startsWith('vbscript:') ||
+          href.toLowerCase().startsWith('data:')
+        ) {
+          context.push('unsafe-scheme');
+          // Do not output dangerous scheme URLs - skip href display for safety
         } else {
           if (download !== undefined) {
             context.push('download');

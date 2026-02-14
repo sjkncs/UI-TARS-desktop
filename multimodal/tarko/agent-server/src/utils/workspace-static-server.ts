@@ -5,27 +5,9 @@
  */
 
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import path from 'path';
 import fs from 'fs';
-
-/** Simple in-memory rate limiter to prevent abuse */
-function createRateLimiter(windowMs = 60_000, maxRequests = 100) {
-  const hits = new Map<string, { count: number; resetTime: number }>();
-  return (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    const ip = req.ip || req.socket.remoteAddress || 'unknown';
-    const now = Date.now();
-    const record = hits.get(ip);
-    if (!record || now > record.resetTime) {
-      hits.set(ip, { count: 1, resetTime: now + windowMs });
-      return next();
-    }
-    record.count++;
-    if (record.count > maxRequests) {
-      return res.status(429).json({ error: 'Too many requests' });
-    }
-    return next();
-  };
-}
 
 /** Escape HTML special characters to prevent XSS */
 function escapeHtml(str: string): string {
@@ -305,7 +287,7 @@ export function setupWorkspaceStaticServer(
   }
 
   const fileResolver = new WorkspaceFileResolver(workspacePath);
-  const rateLimiter = createRateLimiter();
+  const rateLimiter = rateLimit({ windowMs: 60_000, max: 100 });
 
   // Serve workspace files with lower priority (after web UI)
   // Use a middleware function to handle directory listing and file serving

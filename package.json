@@ -71,7 +71,8 @@
       "semver-regex": ">=4.0.1",
       "http-cache-semantics": ">=4.1.1",
       "got": ">=12.0.0",
-      "prismjs": ">=1.30.0"
+      "prismjs": ">=1.30.0",
+      "markdown-it": ">=14.1.1"
     }
   },
   "devDependencies": {

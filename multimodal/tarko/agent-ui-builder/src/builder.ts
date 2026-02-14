@@ -69,9 +69,10 @@ export class AgentUIBuilder {
         if (!resolvedPath.startsWith(allowedBase + path.sep) && resolvedPath !== allowedBase) {
           throw new Error('Output file path must be within the current working directory');
         }
-        // Re-construct safe path from allowedBase + validated relative portion
+        // Sanitize each path segment with path.basename to strip traversal components
         const relativePortion = path.relative(allowedBase, resolvedPath);
-        const safePath = path.join(allowedBase, relativePortion);
+        const safeSegments = relativePortion.split(path.sep).map((s) => path.basename(s));
+        const safePath = path.join(allowedBase, ...safeSegments);
         // Ensure directory exists
         const dir = path.dirname(safePath);
         fs.mkdirSync(dir, { recursive: true });

@@ -13,6 +13,7 @@ import {
   AgentWebUIImplementation,
 } from '@tarko/interface';
 import { AgentServer, AgentServerOptions, express, mergeWebUIConfig } from '@tarko/agent-server';
+import rateLimit from 'express-rate-limit';
 import boxen from 'boxen';
 import chalk from 'chalk';
 import gradient from 'gradient-string';
@@ -145,24 +146,9 @@ function setupUI(
     res.send(injectConfig(htmlContent));
   };
 
-  // Simple rate limiter for static file serving
-  const rateHits = new Map<string, { count: number; resetTime: number }>();
-  const rateLimit = (req: any, res: any, next: any) => {
-    const ip = req.ip || req.socket?.remoteAddress || 'unknown';
-    const now = Date.now();
-    const record = rateHits.get(ip);
-    if (!record || now > record.resetTime) {
-      rateHits.set(ip, { count: 1, resetTime: now + 60_000 });
-      return next();
-    }
-    record.count++;
-    if (record.count > 200) {
-      return res.status(429).json({ error: 'Too many requests' });
-    }
-    return next();
-  };
+  const limiter = rateLimit({ windowMs: 60_000, max: 200 });
 
-  app.get('*', rateLimit, (req, res, next) => {
+  app.get('*', limiter, (req, res, next) => {
     if (!pathMatcher.test(req.path)) {
       return next();
     }
