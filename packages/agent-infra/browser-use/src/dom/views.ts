@@ -257,21 +257,24 @@ export class DOMElementNode extends DOMBaseNode {
           context.push('phone');
         } else if (href.startsWith('#')) {
           context.push('anchor');
-        } else if (
-          href.toLowerCase().startsWith('javascript:') ||
-          href.toLowerCase().startsWith('vbscript:') ||
-          href.toLowerCase().startsWith('data:')
-        ) {
-          context.push('unsafe-scheme');
-          // Do not output dangerous scheme URLs - skip href display for safety
         } else {
-          if (download !== undefined) {
-            context.push('download');
+          const normalizedHref = decodeURI(href).trim().toLowerCase();
+          if (
+            normalizedHref.startsWith('javascript:') ||
+            normalizedHref.startsWith('vbscript:') ||
+            normalizedHref.startsWith('data:')
+          ) {
+            context.push('unsafe-scheme');
+            // Do not output dangerous scheme URLs - skip href display for safety
           } else {
-            context.push('link');
+            if (download !== undefined) {
+              context.push('download');
+            } else {
+              context.push('link');
+            }
+            // Only show href for safe URLs
+            context.push(`href="${href}"`);
           }
-          // Only show href for safe URLs
-          context.push(`href="${href}"`);
         }
       } else {
         context.push('link');

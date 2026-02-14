@@ -32,14 +32,17 @@ async function main() {
             href: link.href,
             text: link.textContent?.trim() || '',
           }))
-          .filter(
-            (item) =>
-              item.href &&
-              !item.href.includes('google') &&
-              !item.href.toLowerCase().startsWith('javascript:') &&
-              !item.href.toLowerCase().startsWith('vbscript:') &&
-              !item.href.toLowerCase().startsWith('data:'),
-          );
+          .filter((item) => {
+            if (!item.href || item.href.includes('google')) return false;
+            const normalized = decodeURI(item.href).trim().toLowerCase();
+            if (
+              normalized.startsWith('javascript:') ||
+              normalized.startsWith('vbscript:') ||
+              normalized.startsWith('data:')
+            )
+              return false;
+            return true;
+          });
       },
       pageFunctionParams: [],
     });
