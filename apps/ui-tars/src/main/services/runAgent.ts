@@ -171,8 +171,15 @@ export const runAgent = async (
   setState({ ...getState(), progressMessage: 'Connecting to API...' });
 
   let modelVersion = getModelVersion(settings.vlmProvider);
-  const isNativeOpenAI =
-    settings.vlmBaseUrl?.includes('api.openai.com') ?? false;
+  let isNativeOpenAI = false;
+  if (settings.vlmBaseUrl) {
+    try {
+      const parsed = new URL(settings.vlmBaseUrl);
+      isNativeOpenAI = parsed.hostname === 'api.openai.com';
+    } catch {
+      isNativeOpenAI = false;
+    }
+  }
   let modelConfig: UITarsModelConfig = {
     baseURL: settings.vlmBaseUrl,
     apiKey: settings.vlmApiKey,
