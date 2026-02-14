@@ -37,7 +37,7 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "electron-updater": "6.3.9",
+    "electron-updater": "6.7.3",
     "flora-colossus": "2.0.0",
     "@common/configs": "workspace:*"
   },

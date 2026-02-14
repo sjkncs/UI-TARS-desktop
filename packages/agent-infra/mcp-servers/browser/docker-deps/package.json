@@ -1,1 +1,1 @@
-{"name":"docker-deps","version":"1.0.0","dependencies":{"puppeteer":"24.4.0","puppeteer-core":"24.4.0","@puppeteer/browsers":"2.8.0"}}
+{"name":"docker-deps","version":"1.0.0","dependencies":{"puppeteer":"24.37.3","puppeteer-core":"24.37.3","@puppeteer/browsers":"2.12.1"}}
