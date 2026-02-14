@@ -30,7 +30,8 @@ WORKDIR /home/pptruser
 ENV DBUS_SESSION_BUS_ADDRESS autolaunch:
 
 # Install @puppeteer/browsers, puppeteer and puppeteer-core into /home/pptruser/node_modules.
-RUN npm install puppeteer@24.4.0 puppeteer-core@24.4.0 @puppeteer/browsers@2.8.0
+COPY docker-deps/package.json docker-deps/package-lock.json ./
+RUN npm ci --ignore-scripts
 
 # Install system dependencies as root.
 USER root
