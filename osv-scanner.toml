@@ -1,0 +1,3 @@
+[[IgnoredVulns]]
+id = "GHSA-848j-6mx2-7j84"
+reason = "elliptic@6.6.1 is the latest version available; no patched release exists yet. Transitive dependency via secp256k1. Will upgrade when a fix is published."
