@@ -27,7 +27,7 @@
     "run:example": "ts-node scripts/example.ts"
   },
   "dependencies": {
-    "@tavily/core": "0.3.1",
+    "@tavily/core": "0.7.1",
     "@agent-infra/browser-search": "workspace:*",
     "@agent-infra/bing-search": "workspace:*",
     "@agent-infra/duckduckgo-search": "workspace:*",
