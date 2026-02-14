@@ -47,6 +47,15 @@ const electronHandler = {
     updatePresetFromRemote: () =>
       ipcRenderer.invoke('setting:updatePresetFromRemote'),
     resetPreset: () => ipcRenderer.invoke('setting:resetPreset'),
+    getCustomModels: () => ipcRenderer.invoke('setting:getCustomModels'),
+    addCustomModel: (model: unknown) =>
+      ipcRenderer.invoke('setting:addCustomModel', model),
+    updateCustomModel: (model: unknown) =>
+      ipcRenderer.invoke('setting:updateCustomModel', model),
+    deleteCustomModel: (id: string) =>
+      ipcRenderer.invoke('setting:deleteCustomModel', id),
+    applyCustomModel: (id: string) =>
+      ipcRenderer.invoke('setting:applyCustomModel', id),
     onUpdate: (callback: (setting: LocalStore) => void) => {
       ipcRenderer.on('setting-updated', (_, state) => callback(state));
     },

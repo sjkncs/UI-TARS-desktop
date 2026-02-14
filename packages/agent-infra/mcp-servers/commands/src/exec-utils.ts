@@ -90,22 +90,19 @@ function messagesFor(result: ExecResult): TextContent[] {
     messages.push({
       // most of the time this is gonna match stderr, TODO do I want/need both error and stderr?
       type: 'text',
-      text: result.message,
-      name: 'ERROR',
+      text: `[ERROR] ${result.message}`,
     });
   }
   if (result.stdout) {
     messages.push({
       type: 'text',
-      text: result.stdout,
-      name: 'STDOUT',
+      text: `[STDOUT] ${result.stdout}`,
     });
   }
   if (result.stderr) {
     messages.push({
       type: 'text',
-      text: result.stderr,
-      name: 'STDERR',
+      text: `[STDERR] ${result.stderr}`,
     });
   }
   return messages;

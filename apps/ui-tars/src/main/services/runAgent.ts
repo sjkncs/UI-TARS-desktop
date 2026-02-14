@@ -127,6 +127,8 @@ export const runAgent = async (
     | RemoteComputerOperator
     | RemoteBrowserOperator;
 
+  setState({ ...getState(), progressMessage: 'Setting up operator...' });
+
   switch (settings.operator) {
     case Operator.LocalComputer:
       operator = new NutJSElectronOperator();
@@ -166,12 +168,16 @@ export const runAgent = async (
       break;
   }
 
+  setState({ ...getState(), progressMessage: 'Connecting to API...' });
+
   let modelVersion = getModelVersion(settings.vlmProvider);
+  const isNativeOpenAI =
+    settings.vlmBaseUrl?.includes('api.openai.com') ?? false;
   let modelConfig: UITarsModelConfig = {
     baseURL: settings.vlmBaseUrl,
     apiKey: settings.vlmApiKey,
     model: settings.vlmModelName,
-    useResponsesApi: settings.useResponsesApi,
+    useResponsesApi: isNativeOpenAI ? settings.useResponsesApi : false,
   };
   let modelAuthHdrs: Record<string, string> = {};
 
@@ -209,6 +215,7 @@ export const runAgent = async (
       setState({
         ...getState(),
         status: StatusEnum.ERROR,
+        progressMessage: null,
         errorMsg: JSON.stringify({
           status: error?.status,
           message: error?.message,
@@ -218,10 +225,10 @@ export const runAgent = async (
     },
     retry: {
       model: {
-        maxRetries: 5,
+        maxRetries: 2,
       },
       screenshot: {
-        maxRetries: 5,
+        maxRetries: 3,
       },
       execute: {
         maxRetries: 1,
@@ -234,6 +241,10 @@ export const runAgent = async (
 
   GUIAgentManager.getInstance().setAgent(guiAgent);
   UTIOService.getInstance().sendInstruction(instructions);
+  setState({
+    ...getState(),
+    progressMessage: 'Taking screenshot & calling API...',
+  });
 
   const { sessionHistoryMessages } = getState();
 
@@ -249,6 +260,7 @@ export const runAgent = async (
         setState({
           ...getState(),
           status: StatusEnum.ERROR,
+          progressMessage: null,
           errorMsg: e.message,
         });
       });

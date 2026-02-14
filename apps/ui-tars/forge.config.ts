@@ -155,9 +155,7 @@ const config: ForgeConfig = {
     name: 'UI TARS',
     icon: 'resources/icon',
     extraResource: ['./resources/app-update.yml'],
-    asar: {
-      unpack,
-    },
+    asar: false, // disabled for local build (asar creation hangs in monorepo); re-enable for CI: { unpack }
     ignore: [ignorePattern],
     prune: false,
     afterCopy: [
@@ -217,7 +215,7 @@ const config: ForgeConfig = {
     }),
   ],
   plugins: [
-    new AutoUnpackNativesPlugin({}),
+    // new AutoUnpackNativesPlugin({}), // disabled: requires asar
     // Fuses are used to enable/disable various Electron functionality
     // at package time, before code signing the application
     // https://github.com/microsoft/playwright/issues/28669#issuecomment-2268380066
@@ -230,8 +228,8 @@ const config: ForgeConfig = {
             [FuseV1Options.EnableCookieEncryption]: true,
             [FuseV1Options.EnableNodeOptionsEnvironmentVariable]: false,
             [FuseV1Options.EnableNodeCliInspectArguments]: false,
-            [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
-            [FuseV1Options.OnlyLoadAppFromAsar]: true,
+            [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: false, // disabled for local non-asar build
+            [FuseV1Options.OnlyLoadAppFromAsar]: false, // disabled for local non-asar build
           }),
         ]),
   ],

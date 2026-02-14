@@ -40,9 +40,9 @@ export interface RetryContext {
 export class SmartRetryManager {
   private config: RetryConfig = {
     maxRetries: 3,
-    baseDelay: 1000,
-    maxDelay: 10000,
-    backoffMultiplier: 2,
+    baseDelay: 500,
+    maxDelay: 3000,
+    backoffMultiplier: 1.5,
   };
 
   /**

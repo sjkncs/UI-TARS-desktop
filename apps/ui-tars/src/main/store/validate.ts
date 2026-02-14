@@ -13,6 +13,17 @@ const PresetSourceSchema = z.object({
   lastUpdated: z.number().optional(),
 });
 
+export const CustomModelConfigSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1),
+  vlmProvider: z.nativeEnum(VLMProviderV2).optional(),
+  vlmBaseUrl: z.string().url(),
+  vlmApiKey: z.string().min(1),
+  vlmModelName: z.string().min(1),
+});
+
+export type CustomModelConfig = z.infer<typeof CustomModelConfigSchema>;
+
 export const PresetSchema = z.object({
   // Local VLM Settings
   vlmProvider: z.nativeEnum(VLMProviderV2).optional(),
@@ -33,6 +44,9 @@ export const PresetSchema = z.object({
   reportStorageBaseUrl: z.string().url().optional(),
   utioBaseUrl: z.string().url().optional(),
   presetSource: PresetSourceSchema.optional(),
+
+  // Custom Model Presets
+  customModels: z.array(CustomModelConfigSchema).optional(),
 });
 
 export type PresetSource = z.infer<typeof PresetSourceSchema>;

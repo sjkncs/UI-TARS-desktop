@@ -224,7 +224,7 @@ export class UITarsModel extends Model {
 
         result = await openai.responses.create(responseParams, {
           ...options,
-          timeout: 1000 * 30,
+          timeout: 1000 * 90,
           headers,
         });
         logger.info('[ResponseAPI] [result]: ', result);
@@ -261,7 +261,7 @@ export class UITarsModel extends Model {
       createCompletionPramsThinkingVp,
       {
         ...options,
-        timeout: 1000 * 30,
+        timeout: 1000 * 90,
         headers,
       },
     );

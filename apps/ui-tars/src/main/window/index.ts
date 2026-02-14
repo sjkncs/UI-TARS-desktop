@@ -8,6 +8,7 @@ import { logger } from '@main/logger';
 import * as env from '@main/env';
 
 import { createWindow } from './createWindow';
+import { windowManager } from '@main/services/windowManager';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -31,6 +32,8 @@ export function createMainWindow() {
     height: 700,
     alwaysOnTop: false,
   });
+
+  windowManager.registerWindow(mainWindow);
 
   mainWindow.on('close', (event) => {
     logger.info('mainWindow closed');
@@ -60,7 +63,15 @@ export function setContentProtection(enable: boolean) {
   mainWindow?.setContentProtection(enable);
 }
 
+export function getMainWindow(): BrowserWindow | null {
+  return mainWindow && !mainWindow.isDestroyed() ? mainWindow : null;
+}
+
 export async function showWindow() {
+  if (!mainWindow || mainWindow.isDestroyed()) {
+    logger.info('[showWindow] Main window destroyed, recreating...');
+    createMainWindow();
+  }
   mainWindow?.setContentProtection(false);
   mainWindow?.setIgnoreMouseEvents(false);
   mainWindow?.show();

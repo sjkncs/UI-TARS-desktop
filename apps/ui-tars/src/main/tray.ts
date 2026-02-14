@@ -16,7 +16,7 @@ import path from 'path';
 import { StatusEnum } from '@ui-tars/shared/types';
 
 import { exportLogs } from '@main/logger';
-import { showWindow } from '@main/window';
+import { showWindow, getMainWindow } from '@main/window';
 import { logger } from '@main/logger';
 
 import { store } from './store/create';
@@ -81,14 +81,11 @@ function sendToRenderer(channel: string, ...args: unknown[]) {
 export function registerGlobalShortcuts() {
   // Ctrl+Shift+T — Show / Hide main window
   globalShortcut.register(SHORTCUT_MAP.showHide, () => {
-    const wins = BrowserWindow.getAllWindows();
-    const mainWin = wins.find((w) => !w.isDestroyed());
-    if (mainWin) {
-      if (mainWin.isVisible() && mainWin.isFocused()) {
-        mainWin.hide();
-      } else {
-        showWindow();
-      }
+    const mainWin = getMainWindow();
+    if (mainWin && mainWin.isVisible() && mainWin.isFocused()) {
+      mainWin.hide();
+    } else {
+      showWindow();
     }
   });
 

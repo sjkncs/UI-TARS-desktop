@@ -7,6 +7,7 @@ import { BrowserWindow, app, screen, ipcMain } from 'electron';
 
 import * as env from '@main/env';
 import { logger } from '@main/logger';
+import { showWindow } from '@main/window';
 
 let bubbleWindow: BrowserWindow | null = null;
 
@@ -119,17 +120,20 @@ export function registerBubbleIPC() {
 
   // Relay shortcut events from bubble renderer to main window renderer
   ipcMain.on('bubble:showMainAndSend', (_event, channel: string) => {
-    const mainWin = BrowserWindow.getAllWindows().find(
-      (w) => w !== bubbleWindow && !w.isDestroyed(),
-    );
-    if (mainWin) {
-      mainWin.show();
-      mainWin.focus();
-      // Forward the event to main window's renderer
-      setTimeout(() => {
-        mainWin.webContents.send(channel);
-      }, 200);
-    }
+    // showWindow() recreates the main window if it was destroyed
+    showWindow().then(() => {
+      const mainWin = BrowserWindow.getAllWindows().find(
+        (w) => w !== bubbleWindow && !w.isDestroyed(),
+      );
+      if (mainWin) {
+        mainWin.show();
+        mainWin.focus();
+        // Forward the event to main window's renderer
+        setTimeout(() => {
+          mainWin.webContents.send(channel);
+        }, 200);
+      }
+    });
   });
 
   ipcMain.on('bubble:startDrag', (_event, { mouseX, mouseY }: { mouseX: number; mouseY: number }) => {
