@@ -38,8 +38,8 @@
     "lodash.isnumber": "3.0.3"
   },
   "devDependencies": {
-    "@rslib/core": "0.10.0",
-    "@types/lodash.isnumber": "3.0.3",
+    "@rslib/core": "0.19.6",
+    "@types/lodash.isnumber": "3.0.9",
     "@common/configs": "workspace:*",
     "typescript": "^5.7.2",
     "vitest": "^3.0.2"

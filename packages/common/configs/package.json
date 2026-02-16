@@ -21,6 +21,6 @@
     "@secretlint/secretlint-rule-secp256k1-privatekey": "^10.2.1",
     "@secretlint/secretlint-rule-privatekey": "^10.2.1",
     "@secretlint/secretlint-rule-1password": "^10.2.1",
-    "@rslib/core": "^0.5.4"
+    "@rslib/core": "^0.19.6"
   }
 }

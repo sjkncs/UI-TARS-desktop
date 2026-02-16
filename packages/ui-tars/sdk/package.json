@@ -65,8 +65,8 @@
     "@ui-tars/action-parser": "workspace:*"
   },
   "devDependencies": {
-    "tsx": "^4.19.2",
-    "@rslib/core": "0.10.0",
+    "tsx": "^4.21.0",
+    "@rslib/core": "0.19.6",
     "@common/configs": "workspace:*",
     "typescript": "^5.7.2",
     "vitest": "^3.0.2",
