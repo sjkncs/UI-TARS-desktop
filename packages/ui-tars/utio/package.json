@@ -25,7 +25,7 @@
   "dependencies": {},
   "devDependencies": {
     "@common/configs": "workspace:*",
-    "@rslib/core": "0.10.0",
+    "@rslib/core": "0.19.6",
     "typescript": "^5.7.2"
   }
 }
