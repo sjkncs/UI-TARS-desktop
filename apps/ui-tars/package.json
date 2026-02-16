@@ -99,7 +99,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/coverage-istanbul": "^3.0.3",
     "builder-util-runtime": "9.3.1",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "dotenv": "^16.4.7",
     "electron": "35.7.5",
     "electron-debug": "^3.2.0",
