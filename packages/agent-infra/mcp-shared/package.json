@@ -46,8 +46,8 @@
   "devDependencies": {
     "@agent-infra/logger": "workspace:*",
     "cross-fetch": "4.1.0",
-    "@rslib/core": "0.10.0",
-    "tsx": "^4.19.3",
+    "@rslib/core": "0.19.6",
+    "tsx": "^4.21.0",
     "vitest": "^3.0.7",
     "@types/diff": "^5.0.9",
     "@types/minimatch": "^5.1.2",
