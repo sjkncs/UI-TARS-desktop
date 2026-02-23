@@ -42,9 +42,9 @@
     "@common/configs": "workspace:*"
   },
   "devDependencies": {
-    "@electron-forge/shared-types": "^7.8.0",
-    "tsx": "^4.19.2",
-    "@rslib/core": "0.10.0",
+    "@electron-forge/shared-types": "^7.11.1",
+    "tsx": "^4.21.0",
+    "@rslib/core": "0.19.6",
     "typescript": "^5.7.2",
     "vitest": "^3.0.2"
   }
