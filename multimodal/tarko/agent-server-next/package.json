@@ -24,7 +24,7 @@
     "@tarko/agent-ui-builder": "workspace:*",
     "@tarko/context-engineer": "workspace:*",
     "@omni-tars/agent": "workspace:*",
-    "hono": "^4.6.10",
+    "hono": "^4.11.10",
     "mongoose": "^8.8.4",
     "transliteration": "^2.3.5",
     "dotenv": "17.2.2",
