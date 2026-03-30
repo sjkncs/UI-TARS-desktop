@@ -65,8 +65,8 @@
     "@ui-tars/action-parser": "workspace:*"
   },
   "devDependencies": {
-    "tsx": "^4.19.2",
-    "@rslib/core": "0.10.0",
+    "tsx": "^4.21.0",
+    "@rslib/core": "0.20.1",
     "@common/configs": "workspace:*",
     "typescript": "^5.7.2",
     "vitest": "^3.0.2",
@@ -75,6 +75,6 @@
     "@vitejs/plugin-react": "^4.3.4",
     "vitest-browser-react": "^0.1.1",
     "@types/async-retry": "1.4.9",
-    "happy-dom": "^20.0.0"
+    "happy-dom": "^20.8.9"
   }
 }
