@@ -20,11 +20,11 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@hono/node-server": "^1.13.7",
+    "@hono/node-server": "^1.19.13",
     "@tarko/agent-ui-builder": "workspace:*",
     "@tarko/context-engineer": "workspace:*",
     "@omni-tars/agent": "workspace:*",
-    "hono": "^4.6.10",
+    "hono": "^4.12.14",
     "mongoose": "^8.8.4",
     "transliteration": "^2.3.5",
     "dotenv": "17.2.2",
