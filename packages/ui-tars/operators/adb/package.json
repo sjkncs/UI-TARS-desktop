@@ -38,7 +38,7 @@
     "@ui-tars/shared": "workspace:*",
     "execa": "5.0.1",
     "inquirer": "8.2.4",
-    "jimp": "1.6.0"
+    "jimp": "1.6.1"
   },
   "devDependencies": {
     "@ui-tars/sdk": "workspace:*",
