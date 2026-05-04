@@ -59,7 +59,7 @@
   },
   "dependencies": {
     "openai": "^5.5.1",
-    "jimp": "1.6.0",
+    "jimp": "1.6.1",
     "async-retry": "1.3.3",
     "@ui-tars/shared": "workspace:*",
     "@ui-tars/action-parser": "workspace:*"
